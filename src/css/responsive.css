@@ -1,0 +1,57 @@
+/* CarolPawsDoku — responsividade (prioridade: celular) */
+
+@media (max-width: 380px) {
+  .btn-menu { font-size: .9rem; gap: 6px; padding: 6px 8px; }
+  .btn-menu svg { width: 18px; height: 18px; }
+  :root { --gutter: 12px; }
+  .btn { font-size: .94rem; }
+  .ind { padding: 4px 8px; }
+  .ind-lives svg { width: 17px; height: 17px; }
+  .how-line { font-size: .74rem; }
+}
+
+@media (max-height: 640px) {
+  .game-msg { min-height: 0; font-size: .82rem; }
+  .how-line { display: none; }
+}
+
+/* Tablets e computadores */
+@media (min-width: 900px) {
+  .cast-panel {
+    display: block; width: 210px; flex: none; align-self: flex-start;
+    background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius); padding: 14px;
+    max-height: 100%; overflow-y: auto;
+  }
+  .menu-grid .btn-menu { min-height: 58px; }
+}
+
+@media (hover: hover) {
+  .cell:not(.placed):hover { filter: brightness(.95) saturate(1.15); }
+  .level-tile:not(.is-locked):hover { border-color: var(--color-text); }
+}
+
+/* Celular deitado: tabuleiro à esquerda, controles à direita (classe aplicada via JS) */
+.compact-land .game-top { padding-top: 4px; }
+.compact-land .indicators { max-width: none; }
+.compact-land .ind { min-height: 34px; }
+.compact-land .game-sub { margin: 2px 0; }
+.compact-land .board-area {
+  max-width: none; display: grid; align-items: start; justify-content: center; gap: 10px 18px;
+  grid-template-columns: var(--board-size) var(--side-w, 260px);
+  grid-template-rows: auto auto 1fr;
+}
+.compact-land .board-wrap { grid-row: 1 / span 3; grid-column: 1; }
+.compact-land .how-line { grid-column: 2; grid-row: 1; text-align: left; display: block; }
+.compact-land .game-actions { width: 100%; grid-column: 2; grid-row: 2; }
+.compact-land .game-msg { grid-column: 2; grid-row: 3; text-align: left; }
+.compact-land .cast-panel { display: none; }
+
+/* Telas baixas (celular deitado): arte à esquerda, botões à direita */
+@media (max-height: 520px) and (orientation: landscape) {
+  .menu-wrap { flex-direction: row; flex-wrap: wrap; max-width: 920px; justify-content: center; align-content: center; gap: 8px 20px; padding-top: 6px; }
+  .menu-hero { width: min(55%, calc((100dvh - 64px) * 1.2133)); min-width: 0; }
+  .menu-buttons { width: min(40%, 360px); }
+  .menu-summary, .menu-credit { flex-basis: 100%; font-size: .75rem; }
+  .menu-wrap { row-gap: 2px; padding-bottom: 4px; }
+  .btn-menu { min-height: 46px; }
+}
