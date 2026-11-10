@@ -1,6 +1,6 @@
 # Carlos & Carol Family Quest 🐾
 
-Um quebra-cabeça de lógica tranquilo: cada **região colorida** esconde um personagem. Os personagens são **Carol, Sol, Mezzo, Jade, Celso R., Rose, Cjota, Mamãe e Sandro**.
+Um quebra-cabeça de lógica tranquilo: cada **região colorida** esconde um personagem. Os personagens são **Carol, Sol, Mezzo, Jade, Celso R., Rose, Cjota, Bethânia e Sandro**.
 
 O jogo roda inteiro no navegador, sem servidor e sem login. Depois do primeiro carregamento, imagens, código e músicas ficam guardados em cache.
 
@@ -29,7 +29,7 @@ O tabuleiro N×N tem N regiões coloridas. A regra:
 | **Desfazer** | Volta a última marca ou o último arraste. |
 | **Dica** | Revela um personagem certo. São 3; **a 3ª encerra a partida**, e o jogo pede confirmação antes. |
 
-- **Marcação automática:** casas descartadas por um personagem já revelado ganham um pontinho suave. Tentar revelar numa delas não custa vida.
+- **Marcação automática (fases 1–9):** casas descartadas por um personagem já revelado ganham um pontinho suave e tentar revelar numa delas não custa vida. A partir da fase 10 os pontinhos somem e você marca tudo.
 - **Teclado:** setas movem, `X`/Espaço marca, `Enter` revela, `Z` desfaz, `Esc` pausa.
 - **Sorteio:** a cada partida, os personagens são sorteados entre as regiões. No 9×9 aparecem os 9, sem repetição.
 - **Personagens já revelados:** só nas fases 1 a 3 alguns aparecem desde o início, para ajudar. Da fase 4 em diante, todos começam escondidos.
@@ -149,6 +149,27 @@ A distribuição foi feita **pelos títulos**, porque as faixas não foram ouvid
 - **Arquivos oficiais:** continuam sendo os do projeto. O cache é só uma camada de velocidade.
 - **Versão nova:** mudar `VERSION` em `sw.js` apaga o cache de código e imagens antigo. As músicas são preservadas.
 - **Migrações:** dados da v1 (perfis, imagens importadas) e o progresso da v2 (que era Sudoku de números) são removidos na primeira abertura; o progresso da v3 começa do zero.
+
+## Campanha de apoio
+
+O jogo tem uma página **Apoie o projeto** (botão rosa no menu) e um aviso que aparece ao abrir o jogo e de novo a cada 3 fases vencidas. O aviso nunca aparece no meio de uma partida, e "Não mostrar este aviso novamente" desliga só o aviso: a página continua no menu. Nenhuma função do jogo depende de contribuição.
+
+Tudo se configura em `src/js/support.js`, no bloco `CONFIG`:
+
+| Campo | O que colocar |
+|---|---|
+| `PAYMENT_URL` | link de pagamento (`https://`). Vazio = botão "Link de apoio em breve". |
+| `PIX_KEY` | chave Pix. Vazio = chave e botão "Copiar" escondidos. |
+| `USD_BRL` | cotação para a estimativa em reais (ex.: `5.4`). `0` = não mostra. |
+| `POPUP_EVERY` | de quantas em quantas fases vencidas o aviso volta (padrão 3). |
+
+Arquivos opcionais em `src/assets/images/`: `desenvolvedor.jpg` (sua foto) e `qrcode-pix.png` (QR Code Pix verdadeiro). Se não existirem, a página esconde esses espaços. Artes: `src/assets/ui/apoio-banner.webp` e `apoio-teaser.webp`.
+
+Depois de trocar algo, aumente `VERSION` em `sw.js` para os aparelhos baixarem a versão nova.
+
+## Instalar como app
+
+O jogo é um PWA (`manifest.webmanifest`, ícones em `src/assets/icons/` e Service Worker). No Chrome do Android: abra o link `https://`, toque em ⋮ → **Instalar app**.
 
 ## Publicar no GitHub Pages
 

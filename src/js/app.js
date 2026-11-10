@@ -4,7 +4,7 @@
 
   const { $, $$, el, icon, charEl, fmt, formatTime } = CPD.ui;
 
-  const SCREENS = ['menu', 'levels', 'game', 'characters', 'scores', 'music', 'settings'];
+  const SCREENS = ['menu', 'levels', 'game', 'characters', 'scores', 'music', 'settings', 'support'];
   let current = null;
 
   /* ================= Roteador ================= */
@@ -18,7 +18,7 @@
     if (name === 'game' && !CPD.game.current()) name = 'levels';
     if (current === 'game' && name !== 'game') {
       CPD.game.leave();
-      ['ov-victory', 'ov-defeat', 'ov-pause', 'ov-quick', 'ov-tutorial'].forEach(CPD.ui.closeOverlay);
+      ['ov-victory', 'ov-defeat', 'ov-pause', 'ov-quick', 'ov-tutorial', 'ov-support'].forEach(CPD.ui.closeOverlay);
     }
     SCREENS.forEach((s) => { $('#screen-' + s).hidden = s !== name; });
     const changed = current !== name;
@@ -28,6 +28,8 @@
     if (render) render();
     if (name !== 'game' && name !== 'music') CPD.audio.setContext('menu');
     if (changed) window.scrollTo(0, 0);
+    // aviso da campanha pendente (a cada 3 fases vencidas): só fora da partida
+    if ((name === 'menu' || name === 'levels') && CPD.support.pending()) setTimeout(CPD.support.maybePopup, 350);
   }
 
   /* ================= Menu ================= */
@@ -243,7 +245,7 @@
 
   const RENDER = {
     menu: renderMenu, levels: renderLevels, characters: renderCharacters,
-    scores: renderScores, music: renderMusic, settings: renderSettings,
+    scores: renderScores, music: renderMusic, settings: renderSettings, support: () => CPD.support.renderPage(),
     game: () => requestAnimationFrame(() => { CPD.game.fitBoard(); requestAnimationFrame(CPD.game.fitBoard); }),
   };
 
@@ -263,6 +265,7 @@
       if (top === 'ov-confirm') { const o = $('#ov-confirm'); if (o._cancel) o._cancel(); }
       else if (top === 'ov-quick') $('#ov-quick [data-act="close"]').click();
       else if (top === 'ov-pause') $('#ov-pause [data-act="resume"]').click();
+      else if (top === 'ov-support') CPD.support.closePopup(false);
     });
 
     CPD.on('progress', () => { if (current === 'menu') renderMenu(); });
@@ -290,8 +293,11 @@
     CPD.anim.applyRootClasses();
     CPD.audio.init();
     CPD.game.bind();
+    CPD.support.init();
     bindGlobal();
     show(location.hash.slice(1) || 'menu');
+    // aviso inicial da campanha (uma vez; respeita “não mostrar novamente”)
+    if (current !== 'game' && current !== 'support') setTimeout(CPD.support.maybePopup, 900);
     CPD.characters.preload();
     registerServiceWorker();
     document.documentElement.classList.add('ready');

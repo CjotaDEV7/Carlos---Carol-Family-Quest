@@ -7,22 +7,24 @@
  *
  * Para publicar arquivos novos ou alterados, aumente VERSION: o cache antigo é apagado.
  */
-const VERSION = 'v3.2.1';
+const VERSION = 'v3.3.0';
 const SHELL_CACHE = 'cpd-shell-' + VERSION;
 const AUDIO_CACHE = 'cpd-audio-v1';
 
 const CORE = [
   './',
   'index.html',
-  'src/css/main.css', 'src/css/menu.css', 'src/css/board.css', 'src/css/animations.css', 'src/css/responsive.css',
+  'manifest.webmanifest',
+  'src/css/main.css', 'src/css/menu.css', 'src/css/board.css', 'src/css/animations.css', 'src/css/support.css', 'src/css/responsive.css',
   'src/js/storage.js', 'src/js/characters.js', 'src/js/regions-generator.js',
   'src/js/levels.js', 'src/js/scoring.js', 'src/js/progress.js', 'src/js/game.js',
-  'src/js/animation-manager.js', 'src/js/audio-manager.js', 'src/js/ui.js', 'src/js/board-ui.js', 'src/js/app.js',
-  'src/assets/icons/favicon.svg',
-  'src/assets/ui/menu-hero.webp',
+  'src/js/animation-manager.js', 'src/js/audio-manager.js', 'src/js/ui.js', 'src/js/board-ui.js', 'src/js/support.js', 'src/js/app.js',
+  'src/assets/icons/favicon.svg', 'src/assets/icons/icon-192.png', 'src/assets/icons/icon-512.png', 'src/assets/icons/icon-maskable-512.png', 'src/assets/icons/apple-touch-icon.png',
+  'src/assets/ui/menu-hero.webp', 'src/assets/ui/apoio-banner.webp', 'src/assets/ui/apoio-teaser.webp',
 ];
 const CHARACTERS = ['carol', 'sol', 'mezzo', 'jade', 'celso', 'rose', 'cjota', 'mamae', 'dr-sandro'];
-const IMAGES = [];
+// opcionais: podem não existir ainda (foto do desenvolvedor e QR Code Pix)
+const IMAGES = ['src/assets/images/desenvolvedor.jpg', 'src/assets/images/qrcode-pix.png'];
 CHARACTERS.forEach((id) => ['normal', 'happy'].forEach((e) => IMAGES.push(`src/assets/characters/${id}/${e}.webp`)));
 
 self.addEventListener('install', (event) => {
@@ -50,7 +52,7 @@ self.addEventListener('fetch', (event) => {
   if (url.origin !== self.location.origin) return; // fontes do Google etc.
   if (url.pathname.includes('/assets/audio/')) return; // músicas: audio-manager.js
 
-  const isImage = url.pathname.includes('/assets/characters/') || url.pathname.includes('/assets/icons/');
+  const isImage = /\/assets\/(characters|icons|ui|images)\//.test(url.pathname);
   if (isImage) {
     event.respondWith((async () => {
       const cache = await caches.open(SHELL_CACHE);

@@ -21,7 +21,8 @@
   let drag = null; // { start, moved, value, group }
 
   const nameOf = (id) => { const c = CPD.characters.get(id); return c ? c.name : ''; };
-  const autoMarks = () => !level.noAutoMark;
+  // Marcação automática (bolinhas nas casas descartadas): só nas fases 1–9. Depois, o jogador marca tudo.
+  const autoMarks = () => !level.noAutoMark && level.id <= 9;
 
   /* ================= Ciclo de vida ================= */
 
@@ -558,6 +559,7 @@
     const nxt = CPD.levels.next(level.id);
     $('#ov-victory [data-act="next"]').hidden = !nxt;
     CPD.ui.openOverlay('ov-victory');
+    CPD.support.noteWin();
     if (rec.unlocked) setTimeout(() => { CPD.audio.play('unlock'); CPD.ui.toast(`Nível ${rec.unlocked} desbloqueado!`, 'ok'); }, 900);
     busy = false;
   }
@@ -650,7 +652,11 @@
       if (!b) return;
       CPD.audio.play('click');
       const act = b.dataset.act;
-      if (act === 'next') { const n = CPD.levels.next(level.id); if (n) start(n.id); }
+      if (act === 'next') {
+        const n = CPD.levels.next(level.id);
+        if (!n) return;
+        if (CPD.support.pending()) { CPD.ui.closeOverlay('ov-victory'); CPD.support.openPopup(() => start(n.id)); } else start(n.id);
+      }
       else if (act === 'retry') start(level.id);
       else { CPD.ui.closeOverlay('ov-victory'); CPD.app.navigate('menu'); }
     });

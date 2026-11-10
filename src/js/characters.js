@@ -20,7 +20,7 @@
     { id: 'celso', name: 'Celso R.', kind: 'person' },
     { id: 'rose', name: 'Rose', kind: 'person' },
     { id: 'cjota', name: 'Cjota', kind: 'person' },
-    { id: 'mamae', name: 'Mamãe', kind: 'person' },
+    { id: 'mamae', name: 'Bethânia', kind: 'person' },
     { id: 'dr-sandro', name: 'Sandro', kind: 'person' },
   ];
   const EXPRESSIONS = ['normal', 'happy'];

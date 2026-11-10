@@ -7,6 +7,10 @@
   <meta name="description" content="Quebra-cabeça de lógica tranquilo: descubra um personagem escondido em cada região colorida.">
   <meta name="theme-color" content="#FBF7F2">
   <link rel="icon" href="src/assets/icons/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="src/assets/icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&display=swap" rel="stylesheet">
@@ -14,6 +18,7 @@
   <link rel="stylesheet" href="src/css/menu.css">
   <link rel="stylesheet" href="src/css/board.css">
   <link rel="stylesheet" href="src/css/animations.css">
+  <link rel="stylesheet" href="src/css/support.css">
   <link rel="stylesheet" href="src/css/responsive.css">
 </head>
 <body>
@@ -61,6 +66,7 @@
             <button class="btn-menu" data-nav="characters"><svg><use href="#i-paw"/></svg>Personagens</button>
             <button class="btn-menu" data-nav="settings"><svg><use href="#i-gear"/></svg>Configurações</button>
           </div>
+          <button class="btn-menu btn-menu-support" data-nav="support" id="btn-support"><svg><use href="#i-heart"/></svg>Apoie o projeto</button>
         </nav>
         <p class="menu-summary" id="menu-summary"></p>
         <p class="menu-credit">Dirigido por CjotaDev7 e feito por IA.</p>
@@ -151,6 +157,16 @@
       </header>
       <div class="screen-body" id="settings-body"></div>
     </section>
+
+    <!-- APOIO AO PROJETO -->
+    <section class="screen" id="screen-support" hidden>
+      <header class="screen-head">
+        <button class="icon-btn" data-nav="menu" aria-label="Voltar ao jogo"><svg><use href="#i-back"/></svg></button>
+        <h2>Apoie o projeto</h2>
+        <span class="head-spacer"></span>
+      </header>
+      <div class="screen-body support-body" id="support-body"></div>
+    </section>
   </div>
 
   <!-- OVERLAYS -->
@@ -229,6 +245,21 @@
     </div>
   </div>
 
+  <div class="overlay" id="ov-support" hidden>
+    <div class="dialog dialog-support" role="dialog" aria-labelledby="support-popup-title">
+      <img class="support-teaser" src="src/assets/ui/apoio-teaser.webp" alt="" decoding="async">
+      <p class="result-kicker">Uma jornada de desenvolvimento independente</p>
+      <h3 id="support-popup-title">Apoie o projeto</h3>
+      <p class="support-popup-text">Este jogo é meu primeiro passo como desenvolvedor independente. Estou juntando o valor do cadastro na Google Play para publicar meus próprios jogos e aplicativos.</p>
+      <p class="support-popup-goal" id="support-popup-goal"></p>
+      <div class="dialog-actions col">
+        <button class="btn btn-accent" data-act="open"><svg><use href="#i-heart"/></svg>Conheça o projeto e apoie</button>
+        <button class="btn" data-act="close">Agora não</button>
+      </div>
+      <label class="support-hide"><input type="checkbox" id="support-popup-hide"> Não mostrar este aviso novamente</label>
+    </div>
+  </div>
+
   <div class="overlay overlay-loading" id="ov-loading" hidden>
     <div class="loader"><span class="spinner" aria-hidden="true"></span><p id="loading-text">Preparando o tabuleiro…</p></div>
   </div>
@@ -248,6 +279,7 @@
   <script src="src/js/audio-manager.js"></script>
   <script src="src/js/ui.js"></script>
   <script src="src/js/board-ui.js"></script>
+  <script src="src/js/support.js"></script>
   <script src="src/js/app.js"></script>
 </body>
 </html>

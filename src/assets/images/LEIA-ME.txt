@@ -1,0 +1,7 @@
+Coloque aqui, com estes nomes exatos:
+
+  desenvolvedor.jpg   sua fotografia (quadrada fica melhor, ex.: 400x400)
+  qrcode-pix.png      o QR Code Pix verdadeiro, baixado do app do seu banco
+
+Enquanto um arquivo não existir, a página de apoio simplesmente esconde aquele espaço.
+O link de pagamento e a chave Pix ficam em src/js/support.js, no bloco CONFIG.
