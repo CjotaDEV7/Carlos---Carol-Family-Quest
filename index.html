@@ -252,7 +252,11 @@
       <h3 id="support-popup-title">Apoie o projeto</h3>
       <p class="support-popup-text">Este jogo é meu primeiro passo como desenvolvedor independente. Estou juntando o valor do cadastro na Google Play para publicar meus próprios jogos e aplicativos.</p>
       <p class="support-popup-amount" id="support-popup-amount"></p>
-      <p class="support-popup-goal" id="support-popup-goal"></p>
+      <div class="support-meter" id="support-meter">
+        <div class="support-meter-head"><span>Meta para publicar na <b>Play Store</b></span><b id="support-meter-goal"></b></div>
+        <div class="support-meter-track" role="progressbar" aria-label="Progresso da meta" aria-valuemin="0" aria-valuemax="100" id="support-meter-bar"><span class="support-meter-fill" id="support-meter-fill"></span></div>
+        <p class="support-meter-note" id="support-meter-note"></p>
+      </div>
       <form class="support-contact" id="support-popup-form" novalidate>
         <label for="support-popup-email">Deixe seu e-mail: vou entrar em contato para pedir sua foto e colocar você na próxima atualização do jogo!</label>
         <input type="email" id="support-popup-email" name="email" placeholder="seu@email.com" autocomplete="email" inputmode="email" maxlength="120" required>

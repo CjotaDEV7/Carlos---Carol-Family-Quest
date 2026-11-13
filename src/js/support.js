@@ -11,6 +11,7 @@
  *  - POPUP_EVERY: o aviso automático volta a aparecer a cada N fases concluídas.
  *  - POPUP_AMOUNT_BRL:  valor sugerido no aviso (R$). O valor cobrado é o do link de pagamento.
  *  - POPUP_PAYMENT_URL: link de pagamento do aviso (ex.: link do Mercado Pago de R$ 2,00). Vazio = PAYMENT_URL.
+ *  - RAISED_USD:        quanto já foi arrecadado (US$), para a barra de progresso da meta. Atualize à mão.
  *  - CONTACT_ENDPOINT:  URL que recebe o e-mail do apoiador por POST JSON (ex.: Formspree/FormSubmit).
  *                       Vazio = o e-mail fica guardado só no aparelho de quem jogou.
  */
@@ -26,7 +27,9 @@
     USD_BRL: 0,
     POPUP_EVERY: 3,
     POPUP_AMOUNT_BRL: 2,
-    POPUP_PAYMENT_URL: '',
+    // link fixo da preferência do Mercado Pago (R$ 2,00): cada clique abre um checkout novo
+    POPUP_PAYMENT_URL: 'https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=497967059-6449d50a-d57b-432b-a716-7c59e6278fad',
+    RAISED_USD: 0,
     CONTACT_ENDPOINT: '',
     DEV_NAME: 'CjotaDev7',
   };
@@ -158,7 +161,12 @@
     const amt = $('#support-popup-amount');
     amt.innerHTML = '';
     amt.append(el('small', null, 'Apoie com'), amount);
-    $('#support-popup-goal').textContent = `Meta: ${money(CONFIG.GOAL_USD, 'USD')}${CONFIG.USD_BRL > 0 ? ' · ≈ ' + money(CONFIG.GOAL_USD * CONFIG.USD_BRL, 'BRL') : ''}`;
+    const pct = Math.max(0, Math.min(100, Math.round((CONFIG.RAISED_USD / CONFIG.GOAL_USD) * 100)));
+    $('#support-meter-goal').textContent = money(CONFIG.GOAL_USD, 'USD');
+    $('#support-meter-bar').setAttribute('aria-valuenow', String(pct));
+    // sempre mostra um pedacinho da barra, para o brilho aparecer mesmo no começo
+    $('#support-meter-fill').style.width = Math.max(pct, 6) + '%';
+    $('#support-meter-note').textContent = `${money(CONFIG.RAISED_USD, 'USD')} de ${money(CONFIG.GOAL_USD, 'USD')} (${pct}%) · cada ${amount} aproxima o jogo da Play Store!`;
     $('#support-popup-pay span').textContent = `Apoiar com ${amount}`;
     $('#support-popup-pay').disabled = !isUrl(popupPaymentUrl());
     $('#support-popup-email').value = state.email || '';
