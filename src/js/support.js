@@ -9,6 +9,10 @@
  *  - PHOTO:       fotografia do desenvolvedor. Arquivo ausente = esconde a foto.
  *  - USD_BRL:     cotação usada só para a estimativa em reais. 0 = não mostra a conversão.
  *  - POPUP_EVERY: o aviso automático volta a aparecer a cada N fases concluídas.
+ *  - POPUP_AMOUNT_BRL:  valor sugerido no aviso (R$). O valor cobrado é o do link de pagamento.
+ *  - POPUP_PAYMENT_URL: link de pagamento do aviso (ex.: link do Mercado Pago de R$ 2,00). Vazio = PAYMENT_URL.
+ *  - CONTACT_ENDPOINT:  URL que recebe o e-mail do apoiador por POST JSON (ex.: Formspree/FormSubmit).
+ *                       Vazio = o e-mail fica guardado só no aparelho de quem jogou.
  */
 (function (CPD) {
   'use strict';
@@ -21,6 +25,9 @@
     GOAL_USD: 25,
     USD_BRL: 0,
     POPUP_EVERY: 3,
+    POPUP_AMOUNT_BRL: 2,
+    POPUP_PAYMENT_URL: '',
+    CONTACT_ENDPOINT: '',
     DEV_NAME: 'CjotaDev7',
   };
 
@@ -28,11 +35,30 @@
   const local = CPD.storage.local;
   const KEY = 'support.v1';
 
-  const state = Object.assign({ hidePopup: false, wins: 0, pending: false, shownOnce: false }, local.get(KEY, {}));
-  function save() { local.set(KEY, { hidePopup: state.hidePopup, wins: state.wins, pending: state.pending }); }
+  const state = Object.assign({ hidePopup: false, wins: 0, pending: false, shownOnce: false, email: '' }, local.get(KEY, {}));
+  function save() { local.set(KEY, { hidePopup: state.hidePopup, wins: state.wins, pending: state.pending, email: state.email }); }
 
   const money = (v, cur) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: cur, minimumFractionDigits: 2 }).format(v);
-  const hasPayment = () => /^https:\/\/\S+$/i.test(CONFIG.PAYMENT_URL);
+  const isUrl = (u) => /^https:\/\/\S+$/i.test(u || '');
+  const hasPayment = () => isUrl(CONFIG.PAYMENT_URL);
+  const popupPaymentUrl = () => (isUrl(CONFIG.POPUP_PAYMENT_URL) ? CONFIG.POPUP_PAYMENT_URL : CONFIG.PAYMENT_URL);
+  const validEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
+
+  /** Guarda o e-mail do apoiador e, se houver CONTACT_ENDPOINT, envia em segundo plano. */
+  function submitContact(email, origin) {
+    state.email = email; save();
+    if (!isUrl(CONFIG.CONTACT_ENDPOINT)) return;
+    try {
+      fetch(CONFIG.CONTACT_ENDPOINT, {
+        method: 'POST', keepalive: true,
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          email, origem: origin, _subject: 'Family Quest: novo apoiador (pedir foto para a próxima atualização)',
+          mensagem: 'Entrar em contato e solicitar a foto para inserir na próxima atualização do jogo.',
+        }),
+      }).catch(() => {});
+    } catch (e) { /* sem rede: o e-mail continua salvo no aparelho */ }
+  }
 
   /* ---------- Página ---------- */
   function renderPage() {
@@ -59,11 +85,25 @@
       CONFIG.USD_BRL > 0 ? el('p', { class: 'support-brl' }, `≈ ${money(CONFIG.GOAL_USD * CONFIG.USD_BRL, 'BRL')}`) : null,
       el('p', { class: 'support-fine' }, 'O valor final pode variar conforme o câmbio e os encargos.'));
 
-    const payBtn = el('button', { class: 'btn btn-accent btn-xl support-pay', id: 'support-pay' }, icon('heart'), hasPayment() ? 'Quero apoiar o projeto' : 'Link de apoio em breve');
+    const payBtn = el('button', { class: 'btn btn-accent btn-xl support-pay', id: 'support-pay', type: 'submit' }, icon('heart'), hasPayment() ? 'Quero apoiar o projeto' : 'Link de apoio em breve');
     payBtn.disabled = !hasPayment();
-    payBtn.addEventListener('click', openPayment);
+    const email = el('input', { type: 'email', id: 'support-email', placeholder: 'seu@email.com', autocomplete: 'email', inputmode: 'email', maxlength: '120' });
+    email.value = state.email || '';
+    const err = el('p', { class: 'support-contact-error' }, 'Digite um e-mail válido para eu poder falar com você.');
+    err.hidden = true;
+    const form = el('form', { class: 'support-contact', novalidate: 'novalidate' },
+      el('label', { for: 'support-email' }, 'Seu e-mail para eu entrar em contato e pedir sua foto para a próxima atualização do jogo:'),
+      email, err, el('div', { class: 'dialog-actions col' }, payBtn));
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const v = email.value.trim();
+      if (!validEmail(v)) { err.hidden = false; email.setAttribute('aria-invalid', 'true'); email.focus(); return; }
+      err.hidden = true; email.removeAttribute('aria-invalid');
+      openPayment();
+      submitContact(v, 'pagina');
+    });
     const pay = el('div', { class: 'card support-pay-card' },
-      payBtn,
+      form,
       el('p', { class: 'hint-text center' }, 'Contribua com qualquer quantia. Todo apoio é voluntário e recebido com gratidão.'),
       el('p', { class: 'support-reward' }, icon('star'), ' Quem apoia ganha uma surpresa: sua imagem no próximo jogo!'));
 
@@ -87,11 +127,13 @@
   }
 
   /** Abre o link configurado numa aba nova; se o navegador bloquear, navega na mesma. Nunca abre sozinho. */
-  function openPayment() {
-    if (!hasPayment()) { CPD.ui.toast('O link de apoio ainda não foi configurado.'); return; }
+  function openPayment(url) {
+    const target = isUrl(url) ? url : CONFIG.PAYMENT_URL;
+    if (!isUrl(target)) { CPD.ui.toast('O link de apoio ainda não foi configurado.'); return false; }
     CPD.audio.play('click');
-    const w = window.open(CONFIG.PAYMENT_URL, '_blank', 'noopener,noreferrer');
-    if (!w) location.href = CONFIG.PAYMENT_URL;
+    const w = window.open(target, '_blank', 'noopener,noreferrer');
+    if (!w) location.href = target;
+    return true;
   }
 
   async function copyText(text, btn) {
@@ -112,7 +154,16 @@
 
   function openPopup(onClose) {
     afterClose = onClose || null;
-    $('#support-popup-goal').textContent = `${money(CONFIG.GOAL_USD, 'USD')}${CONFIG.USD_BRL > 0 ? ' · ≈ ' + money(CONFIG.GOAL_USD * CONFIG.USD_BRL, 'BRL') : ''}`;
+    const amount = money(CONFIG.POPUP_AMOUNT_BRL, 'BRL');
+    const amt = $('#support-popup-amount');
+    amt.innerHTML = '';
+    amt.append(el('small', null, 'Apoie com'), amount);
+    $('#support-popup-goal').textContent = `Meta: ${money(CONFIG.GOAL_USD, 'USD')}${CONFIG.USD_BRL > 0 ? ' · ≈ ' + money(CONFIG.GOAL_USD * CONFIG.USD_BRL, 'BRL') : ''}`;
+    $('#support-popup-pay span').textContent = `Apoiar com ${amount}`;
+    $('#support-popup-pay').disabled = !isUrl(popupPaymentUrl());
+    $('#support-popup-email').value = state.email || '';
+    $('#support-popup-email').removeAttribute('aria-invalid');
+    $('#support-popup-error').hidden = true;
     $('#support-popup-hide').checked = false;
     CPD.ui.openOverlay('ov-support');
     state.pending = false; state.shownOnce = true; save();
@@ -147,6 +198,23 @@
       if (!b) return;
       CPD.audio.play('click');
       closePopup(b.dataset.act === 'open');
+    });
+    $('#support-popup-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const input = $('#support-popup-email');
+      const v = input.value.trim();
+      if (!validEmail(v)) {
+        $('#support-popup-error').hidden = false;
+        input.setAttribute('aria-invalid', 'true');
+        input.focus();
+        CPD.audio.play('error');
+        return;
+      }
+      // abre o pagamento ainda dentro do clique (evita bloqueio de pop-up) e depois envia o contato
+      if (!openPayment(popupPaymentUrl())) return;
+      submitContact(v, 'aviso');
+      CPD.ui.toast('Obrigado! Vou entrar em contato pelo seu e-mail. ♥', 'ok');
+      closePopup(false);
     });
   }
 

@@ -1,7 +1,9 @@
 /* CarolPawsDoku — tela de jogo do quebra-cabeça de regiões.
  *
- * Toque: 1× marca ✕ · 2× revela (validado contra a solução) · arrastar marca/apaga várias ✕.
- * Revelar certo mostra o personagem da região; errado custa 1 vida e a casa vira ✕.
+ * Toque: 1º toque marca ✕ · 2º toque seguido na mesma casa revela (validado contra a solução).
+ * Arrastar só marca ✕ (nunca revela nem apaga). Casa que já tinha ✕ (de arraste ou de antes):
+ * o 1º toque apaga o ✕ e só o toque seguinte revela.
+ * Revelar certo mostra o personagem da região; errado (inclusive casa descartada) custa 1 vida e vira ✕.
  * Teclado: setas movem, X/Espaço marca, Enter revela, Z desfaz, Esc pausa.
  */
 (function (CPD) {
@@ -19,6 +21,7 @@
   let coachIdx = -1;
   let msgTimer = null;
   let drag = null; // { start, moved, value, group }
+  let armed = -1;  // casa pronta para revelar no próximo toque (só a do último toque)
 
   const nameOf = (id) => { const c = CPD.characters.get(id); return c ? c.name : ''; };
   // Marcação automática (bolinhas nas casas descartadas): só nas fases 1–9. Depois, o jogador marca tudo.
@@ -45,7 +48,7 @@
         return;
       }
       level = session.level;
-      focus = -1; busy = false; paused = false; coachIdx = -1; drag = null;
+      focus = -1; busy = false; paused = false; coachIdx = -1; drag = null; armed = -1;
       // personagens já revelados no início também entram na coleção
       if (!o.resume && session.givens.length) CPD.progress.markFound(session.givens.map((g) => session.characterAt(g)));
       setup();
@@ -232,6 +235,7 @@
       cells[i].classList.toggle('focus', i === focus);
       cells[i].classList.toggle('hl-line', inLine && i !== focus);
       cells[i].classList.toggle('coach', i === coachIdx);
+      cells[i].classList.toggle('armed', i === armed && !session.isPlaced(i));
       cells[i].tabIndex = i === (focus >= 0 ? focus : 0) ? 0 : -1;
     }
   }
@@ -289,31 +293,33 @@
 
   function canPlay() { return session && session.status === 'playing' && !busy && !paused; }
 
-  /** Toque simples: livre → ✕ → revelar. */
+  /**
+   * Toque simples, sempre em dois passos na mesma casa:
+   *  - casa livre:      1º toque marca ✕ · 2º toque revela;
+   *  - casa já com ✕:   1º toque apaga o ✕ · 2º toque revela;
+   *  - fases sem marcas: 1º toque seleciona · 2º toque revela.
+   * Tocar em outra casa (ou arrastar/desfazer) cancela a revelação pendente.
+   */
   function tap(i) {
     if (!canPlay()) return;
     focus = i;
-    if (session.isPlaced(i)) { CPD.audio.play('select'); updateHighlights(); return; }
-    if (!level.noMarks && !session.marks[i]) {
-      session.toggleMark(i);
-      CPD.audio.play('select');
+    if (session.isPlaced(i)) { armed = -1; CPD.audio.play('select'); updateHighlights(); return; }
+    if (armed === i) { armed = -1; reveal(i); return; }
+    armed = i;
+    CPD.audio.play('select');
+    if (!level.noMarks) {
+      const hadMark = !!session.marks[i];
+      session.setMark(i, hadMark ? 0 : 1);
       renderCell(i);
-      CPD.anim.play(cells[i].querySelector('.mark'), 'pop');
+      if (!hadMark) CPD.anim.play(cells[i].querySelector('.mark'), 'pop');
       renderIndicators();
-      updateHighlights();
       save();
-      return;
     }
-    reveal(i);
+    updateHighlights();
   }
 
   function reveal(i) {
-    if (autoMarks() && session.eliminated(i)) {
-      message('Essa casa já está descartada por um personagem revelado.');
-      CPD.anim.shake(cells[i]);
-      if (!level.noMarks) { session.toggleMark(i); renderCell(i); renderIndicators(); }
-      return;
-    }
+    armed = -1;
     const foundBefore = new Set(session.foundIds());
     const res = session.place(i);
     if (res.type === 'correct') {
@@ -362,6 +368,8 @@
     if (!canPlay()) return;
     const changed = session.undo();
     if (!changed) return;
+    armed = -1;
+    updateHighlights();
     CPD.audio.play('click');
     changed.forEach((i) => renderCell(i));
     renderIndicators();
@@ -406,7 +414,7 @@
     if (i < 0) return;
     e.preventDefault();
     $('#board').setPointerCapture(e.pointerId);
-    drag = { start: i, last: i, moved: false, value: session.marks[i] ? 0 : 1, group: null, id: e.pointerId };
+    drag = { start: i, last: i, moved: false, value: 1, group: null, id: e.pointerId }; // arrastar só marca ✕
   }
   function onPointerMove(e) {
     if (!drag || e.pointerId !== drag.id || level.noMarks) return;
@@ -414,6 +422,7 @@
     if (i < 0 || i === drag.last) return;
     if (!drag.moved) {
       drag.moved = true;
+      armed = -1;
       drag.group = session.beginGroup();
       if (session.setMark(drag.start, drag.value, drag.group)) renderCell(drag.start);
     }
@@ -424,7 +433,7 @@
     if (!drag || e.pointerId !== drag.id) return;
     const d = drag;
     drag = null;
-    if (d.moved) { session.endGroup(d.group); renderIndicators(); save(); return; }
+    if (d.moved) { session.endGroup(d.group); renderIndicators(); updateHighlights(); save(); return; }
     tap(d.start);
   }
 
@@ -616,7 +625,7 @@
     else if (k === 'ArrowLeft') { moveFocus(0, -1); e.preventDefault(); }
     else if (k === 'ArrowRight') { moveFocus(0, 1); e.preventDefault(); }
     else if (focus >= 0 && (k === 'x' || k === 'X' || k === ' ') && !level.noMarks) {
-      if (!session.isPlaced(focus)) { session.toggleMark(focus); renderCell(focus); renderIndicators(); save(); }
+      if (!session.isPlaced(focus)) { armed = -1; session.toggleMark(focus); renderCell(focus); renderIndicators(); updateHighlights(); save(); }
       e.preventDefault();
     } else if (focus >= 0 && k === 'Enter') { if (!session.isPlaced(focus)) reveal(focus); e.preventDefault(); }
     else if (k === 'z' || k === 'Z') undo();

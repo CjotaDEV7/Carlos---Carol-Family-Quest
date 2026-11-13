@@ -81,6 +81,8 @@
 .found-dot { width: calc(var(--c) * .42); height: calc(var(--c) * .42); border-radius: 50%; background: var(--pastel-mint-deep); }
 .cell.given .char::after { content: ''; position: absolute; right: -2%; top: -2%; width: 22%; height: 22%; border-radius: 50%; background: var(--color-surface); box-shadow: inset 0 0 0 2px var(--pastel-mint-deep); }
 .cell.is-wrong { background: color-mix(in srgb, var(--color-error) 30%, var(--rc)); }
+/* casa pronta para revelar no próximo toque */
+.cell.armed { box-shadow: inset 0 0 0 3px color-mix(in srgb, var(--color-text) 55%, transparent); }
 .cell.coach { box-shadow: inset 0 0 0 3px var(--pastel-mint-deep); animation: coach-pulse 1.6s ease-in-out infinite; }
 @keyframes coach-pulse { 50% { box-shadow: inset 0 0 0 3px transparent; } }
 

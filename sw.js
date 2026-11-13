@@ -7,7 +7,7 @@
  *
  * Para publicar arquivos novos ou alterados, aumente VERSION: o cache antigo é apagado.
  */
-const VERSION = 'v3.3.0';
+const VERSION = 'v3.4.0';
 const SHELL_CACHE = 'cpd-shell-' + VERSION;
 const AUDIO_CACHE = 'cpd-audio-v1';
 

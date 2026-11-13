@@ -58,14 +58,14 @@
     basics: [
       { title: 'Bem-vindos ao Family Quest!', text: 'O tabuleiro é dividido em <b>regiões coloridas</b>. Em cada região mora <b>um personagem</b> escondido.' },
       { title: 'A regra', text: 'Cada <b>linha</b>, cada <b>coluna</b> e cada <b>região</b> tem exatamente <b>um</b> personagem. E eles <b>nunca se encostam</b> — nem na diagonal.' },
-      { title: 'Como revelar', text: 'Toque <b>uma vez</b> para marcar ✕ (“aqui não”). Toque <b>de novo</b> para revelar um personagem. Acertou: ele aparece! Errou: você perde uma das <b>3 vidas</b>.' },
+      { title: 'Como revelar', text: 'Toque <b>uma vez</b> para marcar ✕ (“aqui não”). Toque <b>de novo</b> na mesma casa para revelar um personagem. Acertou: ele aparece! Errou: você perde uma das <b>3 vidas</b>.' },
       { title: 'Vamos começar?', text: 'Alguns personagens já estão revelados para ajudar. Comece por eles e pela região que tiver menos espaço.', coach: true },
     ],
     marks: [
-      { title: 'Marque sem medo', text: 'As marcas ✕ são só lembretes e nunca custam vida. <b>Arraste o dedo</b> para marcar várias casas de uma vez.' },
+      { title: 'Marque sem medo', text: 'As marcas ✕ são só lembretes e nunca custam vida. <b>Arraste o dedo</b> para marcar várias casas de uma vez. Para revelar uma casa com ✕, toque uma vez para apagar o ✕ e outra para revelar.' },
     ],
     touch: [
-      { title: 'Ninguém se encosta', text: 'Ao revelar um personagem, as casas ao redor dele (inclusive as diagonais) ficam marcadas automaticamente: ali não cabe mais ninguém.' },
+      { title: 'Ninguém se encosta', text: 'Ao revelar um personagem, as casas ao redor dele (inclusive as diagonais) ficam marcadas automaticamente: ali não cabe mais ninguém. Revelar uma casa descartada também custa uma vida!' },
     ],
     confined: [
       { title: 'Região numa linha só', text: 'Se todas as casas livres de uma região estão na <b>mesma linha</b>, o personagem dela fica nessa linha — então o resto da linha pode receber ✕.' },

@@ -251,11 +251,18 @@
       <p class="result-kicker">Uma jornada de desenvolvimento independente</p>
       <h3 id="support-popup-title">Apoie o projeto</h3>
       <p class="support-popup-text">Este jogo é meu primeiro passo como desenvolvedor independente. Estou juntando o valor do cadastro na Google Play para publicar meus próprios jogos e aplicativos.</p>
+      <p class="support-popup-amount" id="support-popup-amount"></p>
       <p class="support-popup-goal" id="support-popup-goal"></p>
-      <div class="dialog-actions col">
-        <button class="btn btn-accent" data-act="open"><svg><use href="#i-heart"/></svg>Conheça o projeto e apoie</button>
-        <button class="btn" data-act="close">Agora não</button>
-      </div>
+      <form class="support-contact" id="support-popup-form" novalidate>
+        <label for="support-popup-email">Deixe seu e-mail: vou entrar em contato para pedir sua foto e colocar você na próxima atualização do jogo!</label>
+        <input type="email" id="support-popup-email" name="email" placeholder="seu@email.com" autocomplete="email" inputmode="email" maxlength="120" required>
+        <p class="support-contact-error" id="support-popup-error" hidden>Digite um e-mail válido para eu poder falar com você.</p>
+        <div class="dialog-actions col">
+          <button type="submit" class="btn btn-accent" id="support-popup-pay"><svg><use href="#i-heart"/></svg><span>Apoiar</span></button>
+          <button type="button" class="btn" data-act="open">Conheça o projeto</button>
+          <button type="button" class="btn" data-act="close">Agora não</button>
+        </div>
+      </form>
       <label class="support-hide"><input type="checkbox" id="support-popup-hide"> Não mostrar este aviso novamente</label>
     </div>
   </div>

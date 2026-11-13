@@ -2,7 +2,7 @@
  *
  * Regras: cada linha, coluna e região tem exatamente um personagem; eles nunca se tocam.
  * Revelar na casa certa (validada contra a solução) mostra o personagem da região.
- * Revelar na casa errada custa 1 vida e a casa vira ✕. 3 erros = derrota.
+ * Revelar na casa errada (inclusive uma já descartada) custa 1 vida e a casa vira ✕. 3 erros = derrota.
  * 3 dicas por partida; usar a 3ª encerra a partida. Marcas ✕ nunca custam nada.
  */
 (function (CPD) {
