@@ -12,8 +12,11 @@
  *  - POPUP_AMOUNT_BRL:  valor sugerido no aviso (R$). O valor cobrado é o do link de pagamento.
  *  - POPUP_PAYMENT_URL: link de pagamento do aviso (ex.: link do Mercado Pago de R$ 2,00). Vazio = PAYMENT_URL.
  *  - RAISED_USD:        quanto já foi arrecadado (US$), para a barra de progresso da meta. Atualize à mão.
- *  - CONTACT_ENDPOINT:  URL que recebe o e-mail do apoiador por POST JSON (ex.: Formspree/FormSubmit).
- *                       Vazio = o e-mail fica guardado só no aparelho de quem jogou.
+ *  - CONTACT_ENDPOINT:  URL que recebe o e-mail do apoiador por POST JSON. Usa o FormSubmit (formsubmit.co),
+ *                       que encaminha para o Gmail do desenvolvedor. Vazio = o e-mail fica só no aparelho.
+ *                       1º envio: o FormSubmit manda um e-mail de ATIVAÇÃO; é preciso clicar em "Activate Form".
+ *                       Depois, troque o e-mail na URL pelo código aleatório que o FormSubmit enviar (evita spam).
+ *  - AUTORESPONSE:      resposta automática que o apoiador recebe (agradecimento + pedido da foto).
  */
 (function (CPD) {
   'use strict';
@@ -30,9 +33,28 @@
     // link fixo da preferência do Mercado Pago (R$ 2,00): cada clique abre um checkout novo
     POPUP_PAYMENT_URL: 'https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=497967059-6449d50a-d57b-432b-a716-7c59e6278fad',
     RAISED_USD: 0,
-    CONTACT_ENDPOINT: '',
+    CONTACT_ENDPOINT: 'https://formsubmit.co/ajax/carlosfaustino.pro@gmail.com',
+    CONTACT_EMAIL: 'carlosfaustino.pro@gmail.com',
     DEV_NAME: 'CjotaDev7',
   };
+
+  CONFIG.AUTORESPONSE = [
+    'Olá! Muito obrigado por apoiar o Carlos & Carol Family Quest! ♥',
+    '',
+    `Cada contribuição me aproxima da meta de US$ ${CONFIG.GOAL_USD} para publicar o jogo na Google Play Store, e o seu apoio faz parte disso.`,
+    '',
+    'Como agradecimento, quero colocar você dentro do jogo! Para isso, me envie:',
+    '1. Uma foto sua (ou de quem você quer ver no jogo, pode ser o seu pet!), com o rosto bem visível e boa iluminação;',
+    '2. O nome que deve aparecer no jogo.',
+    '',
+    `É só responder este e-mail ou escrever para ${CONFIG.CONTACT_EMAIL}. Sua imagem vira um personagem e entra na próxima atualização do jogo.`,
+    '',
+    'Se o pagamento não chegou a ser concluído, tudo bem! Você pode apoiar quando quiser pelo botão "Apoie o projeto" no menu do jogo.',
+    '',
+    'Um grande abraço,',
+    `${CONFIG.DEV_NAME} · Carlos & Carol Family Quest`,
+    'https://cjotadev7.github.io/Carlos---Carol-Family-Quest/',
+  ].join('\n');
 
   const { $, el, icon } = CPD.ui;
   const local = CPD.storage.local;
@@ -56,8 +78,14 @@
         method: 'POST', keepalive: true,
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify({
-          email, origem: origin, _subject: 'Family Quest: novo apoiador (pedir foto para a próxima atualização)',
-          mensagem: 'Entrar em contato e solicitar a foto para inserir na próxima atualização do jogo.',
+          email,
+          origem: origin === 'aviso' ? `Aviso do jogo (apoio de ${money(CONFIG.POPUP_AMOUNT_BRL, 'BRL')})` : 'Página "Apoie o projeto"',
+          data: new Date().toLocaleString('pt-BR'),
+          mensagem: 'Apoiador clicou em apoiar e foi para o pagamento. Confira no Mercado Pago se o pagamento foi concluído e peça a foto para a próxima atualização.',
+          _subject: 'Family Quest: novo apoiador (pedir foto para a próxima atualização)',
+          _template: 'table',
+          _captcha: 'false',
+          _autoresponse: CONFIG.AUTORESPONSE,
         }),
       }).catch(() => {});
     } catch (e) { /* sem rede: o e-mail continua salvo no aparelho */ }
