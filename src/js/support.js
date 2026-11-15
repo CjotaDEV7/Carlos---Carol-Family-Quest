@@ -158,12 +158,23 @@
   }
 
   /** Abre o link configurado numa aba nova; se o navegador bloquear, navega na mesma. Nunca abre sozinho. */
+  /**
+   * Abre o pagamento numa aba nova e mantém a partida aberta nesta aba.
+   * Usa um link com target=_blank (não window.open com 'noopener', que sempre devolve null
+   * e fazia o jogo navegar para o pagamento, encerrando a sessão).
+   */
   function openPayment(url) {
     const target = isUrl(url) ? url : CONFIG.PAYMENT_URL;
     if (!isUrl(target)) { CPD.ui.toast('O link de apoio ainda não foi configurado.'); return false; }
     CPD.audio.play('click');
-    const w = window.open(target, '_blank', 'noopener,noreferrer');
-    if (!w) location.href = target;
+    const a = document.createElement('a');
+    a.href = target;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
     return true;
   }
 
