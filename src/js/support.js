@@ -22,7 +22,7 @@
   'use strict';
 
   const CONFIG = {
-    PAYMENT_URL: 'https://mpago.la/2yHjUYS',
+    PAYMENT_URL: 'https://mpago.la/14BbqRv',
     PIX_KEY: '',
     PIX_QR: 'src/assets/images/qrcode-pix.png',
     PHOTO: 'src/assets/images/desenvolvedor.jpg',
@@ -30,8 +30,8 @@
     USD_BRL: 0,
     POPUP_EVERY: 3,
     POPUP_AMOUNT_BRL: 2,
-    // link fixo da preferência do Mercado Pago (R$ 2,00): cada clique abre um checkout novo
-    POPUP_PAYMENT_URL: 'https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=497967059-6449d50a-d57b-432b-a716-7c59e6278fad',
+    // vazio: o aviso usa o mesmo link de PAYMENT_URL
+    POPUP_PAYMENT_URL: '',
     RAISED_USD: 0,
     CONTACT_ENDPOINT: 'https://formsubmit.co/ajax/carlosfaustino.pro@gmail.com',
     CONTACT_EMAIL: 'carlosfaustino.pro@gmail.com',
