@@ -32,16 +32,12 @@
     { id: 'o-nivel-zen-final', name: 'O Nível Zen Final' },
   ];
 
-  /* Listas por contexto. Edite aqui para trocar a música de cada momento. */
+  /* Trilha contínua, como uma rádio: a música só muda quando a faixa termina.
+   * Trocar de tela, entrar numa fase, vencer ou encerrar uma rodada NÃO troca a
+   * música (vitória e fim de rodada têm só os efeitos sonoros curtos).
+   * Todas as faixas tocam uma vez, em ordem embaralhada, antes de alguma repetir. */
   const PLAYLISTS = {
-    menu: { label: 'Tela inicial e menus', tracks: ['academia-de-calma', 'antarctic-chill'] },
-    intro: { label: 'Partida · níveis 1–5', tracks: ['island-puzzle-flow', 'brisa-tropical'] },
-    mid: { label: 'Partida · níveis 6–12', tracks: ['bikini-atoll-lofi', 'vibe-da-praia-maluca'] },
-    adv: { label: 'Partida · níveis 13–20', tracks: ['twisted-harmony', 'folga-do-cientista'] },
-    special: { label: 'Partida · níveis 21+', tracks: ['gem-stone-hop', 'twisted-harmony', 'island-puzzle-flow'] },
-    victory: { label: 'Fase concluída', tracks: ['gem-stone-hop'], once: true },
-    finale: { label: 'Conclusão da campanha', tracks: ['o-nivel-zen-final'], once: true },
-    defeat: { label: 'Fim da rodada', tracks: ['academia-de-calma'], once: true },
+    main: { label: 'Trilha do jogo · segue tocando entre as telas', tracks: TRACKS.map((t) => t.id) },
   };
 
   const SFX = [
@@ -74,7 +70,6 @@
   });
   let active = 0; // índice do player audível
   const blobUrls = new Map(); // id → objectURL (limitado a 4 para economizar memória)
-  const lastPlayed = {};
 
   /* ---------------- Inicialização ---------------- */
   function init() {
@@ -288,9 +283,11 @@
 
   function onEnded(p) {
     if (p !== players[active] || p._once) return;
-    const key = currentKey && PLAYLISTS[currentKey] ? currentKey : null;
-    if (key) playTrack(pickFrom(key), { key });
+    // faixa da trilha (ou ouvida na tela Músicas) terminou: segue para a próxima
+    if (currentKey === 'main' || isPreview()) playTrack(nextTrack(), { key: 'main' });
   }
+
+  const isPreview = () => !!currentKey && currentKey.indexOf('preview:') === 0;
 
   function stopMusic(silent) {
     const my = ++token;
@@ -301,39 +298,32 @@
     if (!silent) CPD.emit('music', { playing: false });
   }
 
-  function pickFrom(key) {
-    const list = PLAYLISTS[key].tracks;
-    if (list.length === 1) return list[0];
-    let id;
-    do { id = list[Math.floor(Math.random() * list.length)]; } while (id === lastPlayed[key]);
-    lastPlayed[key] = id;
-    return id;
-  }
-
-  function keyFor(context) {
-    if (context === 'victory' || context === 'finale' || context === 'defeat' || context === 'menu') return context;
-    if (context && context.indexOf('game:') === 0) {
-      const g = context.slice(5);
-      return g === 'expansion' ? 'special' : (PLAYLISTS[g] ? g : 'mid');
+  /** Próxima faixa da trilha: fila embaralhada; nenhuma repete antes de todas tocarem. */
+  let queue = [];
+  function nextTrack() {
+    if (!queue.length) {
+      queue = PLAYLISTS.main.tracks.slice();
+      for (let i = queue.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [queue[i], queue[j]] = [queue[j], queue[i]]; }
+      if (queue.length > 1 && queue[0] === currentTrack) queue.push(queue.shift());
     }
-    return 'menu';
+    return queue.shift();
   }
 
-  /** Define o contexto musical ('menu', 'game:intro', 'victory', 'finale', 'defeat'). */
-  function setContext(context, force) {
+  /** Avisa a tela atual ('menu', 'game:intro', 'victory'…). Só inicia a trilha; não troca a música. */
+  function setContext(context) {
     currentContext = context;
     if (!unlocked) { pendingStart = true; return; }
     if (S().get('trackMode') === 'manual') {
       const saved = S().get('manualTrack');
       // faixa salva pode ser de uma trilha antiga: cai na primeira do menu
-      const id = TRACKS.some((t) => t.id === saved) ? saved : PLAYLISTS.menu.tracks[0];
-      if (!force && currentTrack === id && currentKey === 'manual') return;
+      const id = TRACKS.some((t) => t.id === saved) ? saved : TRACKS[0].id;
+      if (currentTrack === id && (currentKey === 'manual' || isPreview())) { currentKey = 'manual'; players[active].loop = true; return; }
       playTrack(id, { key: 'manual', loopOne: true });
       return;
     }
-    const key = keyFor(context);
-    if (!force && key === currentKey && currentTrack) return;
-    playTrack(pickFrom(key), { key, once: !!PLAYLISTS[key].once });
+    // trilha contínua: se já há música tocando, ela continua
+    if (currentTrack && (currentKey === 'main' || isPreview())) { currentKey = 'main'; return; }
+    playTrack(nextTrack(), { key: 'main' });
   }
 
   CPD.on('settings', ({ key }) => {

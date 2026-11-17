@@ -182,7 +182,7 @@
       el('div', { class: 'settings-list' },
         settingRow('Volume da música', null, range('musicVolume')),
         settingRow('Silenciar música', null, toggle('muteMusic')),
-        settingRow('Seleção de trilha', 'Automática troca a música conforme a tela e a fase', select('trackMode', [{ value: 'auto', label: 'Automática' }, { value: 'manual', label: 'Sempre a mesma' }])),
+        settingRow('Seleção de trilha', 'Contínua: a música segue entre as telas e só troca quando a faixa termina', select('trackMode', [{ value: 'auto', label: 'Trilha contínua' }, { value: 'manual', label: 'Sempre a mesma' }])),
         settingRow('Trilha fixa', 'Usada no modo “Sempre a mesma”', select('manualTrack', CPD.audio.TRACKS.map((t) => ({ value: t.id, label: t.name })))),
         settingRow('Repetir a faixa', 'Desligado: segue para a próxima da lista', toggle('loop')))));
 

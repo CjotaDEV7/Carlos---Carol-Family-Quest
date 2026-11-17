@@ -118,25 +118,18 @@ A trilha já está integrada: as 20 músicas estão em `src/assets/audio/music/`
 
 ## Músicas
 
-As 10 faixas ficam em `src/assets/audio/music/`. Cada contexto tem uma lista, definida em `PLAYLISTS` dentro de `src/js/audio-manager.js`:
+As 10 faixas ficam em `src/assets/audio/music/` e formam **uma trilha contínua**, como uma rádio (`PLAYLISTS.main` em `src/js/audio-manager.js`):
 
-| Contexto | Faixas |
-|---|---|
-| Tela inicial e menus | Academia de Calma · Antarctic Chill |
-| Partida, níveis 1–5 | Island Puzzle Flow · Brisa Tropical |
-| Partida, níveis 6–12 | Bikini Atoll Lofi · Vibe da Praia Maluca |
-| Partida, níveis 13–20 | Twisted Harmony · Folga do Cientista |
-| Partida, níveis 21+ | Gem Stone Hop · Twisted Harmony · Island Puzzle Flow |
-| Fase concluída | Gem Stone Hop |
-| Conclusão da campanha (nível 25) | O Nível Zen Final |
-| Fim da rodada (as 3 vidas ou a 3ª dica) | Academia de Calma |
+- A música **só troca quando a faixa termina**. Abrir telas, entrar numa fase, concluir uma fase ou encerrar uma rodada não trocam a música; vitória e fim de rodada têm só os efeitos sonoros curtos.
+- As faixas tocam em ordem embaralhada e nenhuma repete antes de todas tocarem.
+- Faixa ouvida na tela **Músicas** continua tocando ao sair dela.
+
+Faixas: Academia de Calma · Antarctic Chill · Island Puzzle Flow · Brisa Tropical · Bikini Atoll Lofi · Vibe da Praia Maluca · Twisted Harmony · Folga do Cientista · Gem Stone Hop · O Nível Zen Final.
 
 Os arquivos usam nomes sem espaços nem acentos (o `id` da faixa); o nome exibido no jogo fica em `TRACKS`. Ao substituir um arquivo mantendo o mesmo nome, mude o sufixo de `AUDIO_CACHE` em `audio-manager.js` **e** em `sw.js`.
 
-A distribuição foi feita **pelos títulos**. Para trocar, basta editar `PLAYLISTS`.
-
 - **Transições:** as músicas nunca tocam juntas. A faixa atual sai devagar (2,8 s), há meio segundo de silêncio e a nova entra devagar (3,5 s), com curvas suaves. Nos 4 s finais de cada faixa o volume também desce sozinho. Os tempos ficam no topo de `audio-manager.js`. Quando a faixa acaba, segue a próxima da lista, ou repete se "Repetir a faixa" estiver ligado.
-- **Volume e modo:** volume e silenciar ficam em Configurações e em Músicas. Música e efeitos começam em 10% (padrão em `src/js/storage.js`). Também há o modo "Sempre a mesma".
+- **Volume e modo:** volume e silenciar ficam em Configurações e em Músicas. Música e efeitos começam em 10% (padrão em `src/js/storage.js`). Em **Seleção de trilha** há a *Trilha contínua* (padrão) e o modo *Sempre a mesma*.
 - **Efeitos sonoros:** gerados pelo próprio navegador (seleção, acerto, erro, dica, miado, revelação, vitória, derrota, cliques).
 - **Autoplay:** o áudio começa após o primeiro toque, por exigência dos navegadores.
 
