@@ -58,7 +58,7 @@
     basics: [
       { title: 'Bem-vindos ao Family Quest!', text: 'O tabuleiro é dividido em <b>regiões coloridas</b>. Em cada região mora <b>um personagem</b> escondido.' },
       { title: 'A regra', text: 'Cada <b>linha</b>, cada <b>coluna</b> e cada <b>região</b> tem exatamente <b>um</b> personagem. E eles <b>nunca se encostam</b> — nem na diagonal.' },
-      { title: 'Como revelar', text: 'Toque <b>uma vez</b> para marcar ✕ (“aqui não”). Toque <b>de novo</b> na mesma casa para revelar um personagem. Acertou: ele aparece! Errou: você perde uma das <b>3 vidas</b>.' },
+      { title: 'Como revelar', text: 'Toque <b>uma vez</b> para marcar ✕ (“aqui não”). Toque <b>de novo</b> na mesma casa para revelar um personagem. Acertou: ele aparece! Errou: usa uma das <b>3 vidas</b> da rodada, sem pressa.' },
       { title: 'Vamos começar?', text: 'Alguns personagens já estão revelados para ajudar. Comece por eles e pela região que tiver menos espaço.', coach: true },
     ],
     marks: [

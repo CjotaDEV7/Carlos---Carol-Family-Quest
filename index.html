@@ -20,6 +20,18 @@
   <link rel="stylesheet" href="src/css/animations.css">
   <link rel="stylesheet" href="src/css/support.css">
   <link rel="stylesheet" href="src/css/responsive.css">
+  <link rel="stylesheet" href="src/css/themes.css">
+  <script>
+    /* aplica o tema salvo antes de desenhar a página (evita piscar claro); ver src/js/theme.js */
+    (function () {
+      try {
+        var t = (JSON.parse(localStorage.getItem('cpd.settings') || '{}').theme) || 'porcelana';
+        if (t === 'auto') t = window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'cafe' : 'porcelana';
+        document.documentElement.dataset.theme = t;
+        if (t !== 'porcelana') document.documentElement.classList.add('theme-dark');
+      } catch (e) { /* sem LocalStorage: tema claro */ }
+    })();
+  </script>
 </head>
 <body>
   <!-- Ícones -->
@@ -210,12 +222,12 @@
   <div class="overlay" id="ov-defeat" hidden>
     <div class="dialog dialog-result defeat">
       <p class="result-kicker" id="defeat-kicker">Nível 1</p>
-      <h3 class="result-title">Tudo bem, amor</h3>
+      <h3 class="result-title">Aqui ninguém perde</h3>
       <div class="defeat-char" id="defeat-char" hidden></div>
       <p class="muted center" id="defeat-reason"></p>
       <dl class="result-table" id="defeat-table"></dl>
       <div class="dialog-actions">
-        <button class="btn btn-primary" data-act="retry"><svg><use href="#i-refresh"/></svg>Tentar novamente</button>
+        <button class="btn btn-primary" data-act="retry"><svg><use href="#i-refresh"/></svg>Jogar de novo</button>
         <button class="btn" data-act="menu"><svg><use href="#i-home"/></svg>Menu principal</button>
       </div>
     </div>
@@ -280,6 +292,7 @@
   <noscript><p class="noscript">O jogo Carlos &amp; Carol Family Quest precisa de JavaScript ativado.</p></noscript>
 
   <script src="src/js/storage.js"></script>
+  <script src="src/js/theme.js"></script>
   <script src="src/js/characters.js"></script>
   <script src="src/js/regions-generator.js"></script>
   <script src="src/js/levels.js"></script>

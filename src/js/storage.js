@@ -60,14 +60,15 @@
 
   /* ---------------- Configurações ---------------- */
   const SETTINGS_DEFAULTS = {
-    musicVolume: 0.5,
-    sfxVolume: 0.8,
+    musicVolume: 0.1,
+    sfxVolume: 0.1,
     muteMusic: false,
     muteSfx: false,
     animations: true,
     reduceMotion: 'system', // system | on | off
+    theme: 'porcelana', // auto | porcelana | cafe | lavanda | menta | ceu | rose (ver theme.js)
     trackMode: 'auto', // auto | manual
-    manualTrack: 'manha-de-sol',
+    manualTrack: 'academia-de-calma',
     loop: false, // true: repete a faixa atual em vez de seguir a lista
   };
 

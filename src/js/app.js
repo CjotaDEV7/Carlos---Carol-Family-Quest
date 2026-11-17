@@ -125,7 +125,7 @@
     const rows = [
       ['Pontuação acumulada', fmt(s.totalScore)],
       ['Melhor pontuação', fmt(s.bestScore)],
-      ['Vitórias · Derrotas', `${s.wins} · ${s.losses}`],
+      ['Fases concluídas · Recomeços', `${s.wins} · ${s.losses}`],
       ['Fases concluídas', `${s.completed}/${CPD.levels.LEVELS.length}`],
       ['Estrelas', String(s.stars)],
       ['Tempo médio (vitórias)', s.avgTime ? formatTime(s.avgTime) : '—'],
@@ -147,7 +147,7 @@
         const i = CPD.progress.levelInfo(l.id);
         ul.appendChild(el('li', null,
           el('span', { class: 'lvl' }, String(l.id)),
-          el('span', null, l.name, el('small', null, i.wins ? `${i.wins} vitória(s) · melhor tempo ${formatTime(i.bestTime)} · ${'★'.repeat(i.stars)}` : `${i.plays} tentativa(s), sem vitória`)),
+          el('span', null, l.name, el('small', null, i.wins ? `${i.wins} vitória(s) · melhor tempo ${formatTime(i.bestTime)} · ${'★'.repeat(i.stars)}` : `${i.plays} rodada(s), ainda sem concluir`)),
           el('span', { class: 'pts' }, i.best ? fmt(i.best) : '—')));
       });
       best.appendChild(ul);
@@ -162,7 +162,7 @@
       h.slice(0, 25).forEach((e) => {
         const L = CPD.levels.get(e.level);
         ul.appendChild(el('li', null,
-          el('span', { class: 'res ' + (e.won ? 'win' : 'loss') }, e.won ? 'vitória' : 'derrota'),
+          el('span', { class: 'res ' + (e.won ? 'win' : 'loss') }, e.won ? 'concluída' : 'recomeço'),
           el('span', null, `Nível ${e.level}${L ? ' · ' + L.name : ''}`, el('small', null, `${CPD.ui.formatDate(e.date)} · ${formatTime(e.time)} · ${e.errors} erro(s) · ${e.hints} dica(s)${!e.won && e.reason === 'hints' ? ' · 3ª dica' : ''}`)),
           el('span', { class: 'pts' }, fmt(e.score))));
       });
@@ -217,6 +217,42 @@
   }
 
   /* ================= Configurações ================= */
+  /** Cartão "Aparência": Automático, Porcelana (claro) e os cinco temas escuros. */
+  function themePicker() {
+    const { THEMES, AUTO, LIGHT, DARK } = CPD.theme;
+    const swatchOf = (id) => (THEMES.find((t) => t.id === id) || THEMES[0]).swatch;
+    const grid = el('div', { class: 'theme-grid', role: 'radiogroup', 'aria-label': 'Tema de cores' });
+    const chips = [];
+    const sync = () => chips.forEach((c) => {
+      const on = c.dataset.theme === CPD.settings.get('theme');
+      c.setAttribute('aria-checked', on ? 'true' : 'false');
+      c.tabIndex = on ? 0 : -1;
+    });
+    [AUTO].concat(THEMES).forEach((t) => {
+      const sw = t.id === 'auto'
+        ? el('span', { class: 'theme-swatch auto' }, el('i', { style: { background: swatchOf(LIGHT)[0] } }), el('i', { style: { background: swatchOf(DARK)[0] } }))
+        : el('span', { class: 'theme-swatch' }, t.swatch.map((c) => el('i', { style: { background: c } })));
+      const chip = el('button', { type: 'button', class: 'theme-chip', role: 'radio', dataset: { theme: t.id } },
+        sw, el('span', null, t.name, el('small', null, t.note)));
+      chip.addEventListener('click', () => { CPD.settings.set('theme', t.id); CPD.audio.play('click'); sync(); });
+      chips.push(chip);
+      grid.appendChild(chip);
+    });
+    // setas do teclado navegam entre as opções, como num grupo de rádio
+    grid.addEventListener('keydown', (e) => {
+      const i = chips.indexOf(document.activeElement);
+      if (i < 0) return;
+      const step = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
+      if (!step) return;
+      e.preventDefault();
+      const next = chips[(i + step + chips.length) % chips.length];
+      next.focus(); next.click();
+    });
+    sync();
+    return el('div', { class: 'card' }, el('h3', null, 'Aparência'),
+      el('p', { class: 'hint-text' }, 'Tema de cores do jogo. Os escuros usam a mesma paleta, em tons de noite.'), grid);
+  }
+
   function renderSettings() {
     const body = $('#settings-body');
     body.innerHTML = '';
@@ -227,6 +263,8 @@
         settingRow('Volume dos efeitos', null, range('sfxVolume')),
         settingRow('Silenciar música', null, toggle('muteMusic')),
         settingRow('Silenciar efeitos', null, toggle('muteSfx')))));
+
+    body.appendChild(themePicker());
 
     body.appendChild(el('div', { class: 'card' }, el('h3', null, 'Movimento'),
       el('div', { class: 'settings-list' },

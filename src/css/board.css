@@ -54,7 +54,7 @@
   transition: background-color .25s ease, filter .25s ease;
 }
 /* linhas finas entre casas da mesma região */
-.cell::after { content: ''; position: absolute; inset: 0; box-shadow: inset -1px -1px 0 rgb(255 255 255 / 0.55); pointer-events: none; }
+.cell::after { content: ''; position: absolute; inset: 0; box-shadow: inset -1px -1px 0 var(--cell-grid); pointer-events: none; }
 /* contorno entre regiões diferentes (larguras definidas por casa em JS) */
 .cell::before {
   content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 2;

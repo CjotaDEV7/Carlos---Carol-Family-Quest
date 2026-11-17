@@ -587,10 +587,9 @@
     const pick = found.length ? found[Math.floor(Math.random() * found.length)] : null;
     if (pick) holder.appendChild(charEl(pick));
     holder.hidden = !pick;
-    const who = pick ? nameOf(pick) + ' te espera para a próxima' : 'Respira e tenta de novo';
-    $('#defeat-reason').textContent = r.reason === 'hints'
-      ? `A terceira dica encerra a partida. ${who}.`
-      : `Três tentativas em casas vazias desta vez. ${who}.`;
+    const who = pick ? `${nameOf(pick)} já está te esperando na próxima rodada` : 'Respira fundo e recomeça no seu ritmo';
+    const why = r.reason === 'hints' ? 'A terceira dica fecha esta rodada' : 'As 3 vidas desta rodada acabaram';
+    $('#defeat-reason').textContent = `${why}, mas o que vale aqui é o seu momento de relaxar. ${who}.`;
     const dl = $('#defeat-table');
     dl.innerHTML = '';
     resultRow(dl, 'Pontuação obtida', CPD.ui.fmt(r.score));

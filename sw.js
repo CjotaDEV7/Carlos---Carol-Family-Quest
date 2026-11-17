@@ -7,16 +7,16 @@
  *
  * Para publicar arquivos novos ou alterados, aumente VERSION: o cache antigo é apagado.
  */
-const VERSION = 'v3.10.0';
+const VERSION = 'v3.12.0';
 const SHELL_CACHE = 'cpd-shell-' + VERSION;
-const AUDIO_CACHE = 'cpd-audio-v1';
+const AUDIO_CACHE = 'cpd-audio-v2';
 
 const CORE = [
   './',
   'index.html',
   'manifest.webmanifest',
-  'src/css/main.css', 'src/css/menu.css', 'src/css/board.css', 'src/css/animations.css', 'src/css/support.css', 'src/css/responsive.css',
-  'src/js/storage.js', 'src/js/characters.js', 'src/js/regions-generator.js',
+  'src/css/main.css', 'src/css/menu.css', 'src/css/board.css', 'src/css/animations.css', 'src/css/support.css', 'src/css/responsive.css', 'src/css/themes.css',
+  'src/js/storage.js', 'src/js/theme.js', 'src/js/characters.js', 'src/js/regions-generator.js',
   'src/js/levels.js', 'src/js/scoring.js', 'src/js/progress.js', 'src/js/game.js',
   'src/js/animation-manager.js', 'src/js/audio-manager.js', 'src/js/ui.js', 'src/js/board-ui.js', 'src/js/support.js', 'src/js/app.js',
   'src/assets/icons/favicon.svg', 'src/assets/icons/icon-192.png', 'src/assets/icons/icon-512.png', 'src/assets/icons/icon-maskable-512.png', 'src/assets/icons/apple-touch-icon.png',

@@ -24,7 +24,7 @@ O tabuleiro N×N tem N regiões coloridas. A regra:
 | Ação | O que acontece |
 |---|---|
 | Toque **1×** numa casa | Marca ✕ ("aqui não"). Marcas nunca custam nada. |
-| Toque **2×** | Tenta revelar. **Certo:** o personagem da região aparece, sorri e fica na casa. **Errado:** perde 1 das **3 vidas** e a casa vira ✕. |
+| Toque **2×** | Tenta revelar. **Certo:** o personagem da região aparece, sorri e fica na casa. **Errado:** usa 1 das **3 vidas** da rodada e a casa vira ✕. |
 | **Arrastar** o dedo | Marca (ou apaga) várias ✕ de uma vez. |
 | **Desfazer** | Volta a última marca ou o último arraste. |
 | **Dica** | Revela um personagem certo. São 3; **a 3ª encerra a partida**, e o jogo pede confirmação antes. |
@@ -35,6 +35,7 @@ O tabuleiro N×N tem N regiões coloridas. A regra:
 - **Personagens já revelados:** só nas fases 1 a 3 alguns aparecem desde o início, para ajudar. Da fase 4 em diante, todos começam escondidos.
 - **Transição de fase:** cada fase começa com um quadro em branco. As casas se encaixam em onda diagonal, com um "toc" suave que sobe de tom, e um acorde leve no fim. O cronômetro só começa quando o tabuleiro fica pronto. Com "Reduzir movimento" ligado, as casas só aparecem esmaecendo; com as animações desligadas, o tabuleiro aparece na hora.
 - **Coleção:** a tela **Personagens** mostra quem você já encontrou.
+- **Aparência:** em Configurações há o tema claro *Porcelana* (padrão), cinco temas escuros feitos com a mesma paleta (*Café, Lavanda, Menta, Céu e Rosé*) e o *Automático*, que segue o aparelho (Porcelana de dia, Café no modo escuro). As cores ficam em `src/css/themes.css`.
 
 ### Fases
 
@@ -117,23 +118,25 @@ A trilha já está integrada: as 20 músicas estão em `src/assets/audio/music/`
 
 ## Músicas
 
-As 20 faixas ficam em `src/assets/audio/music/`. Cada contexto tem uma lista, definida em `PLAYLISTS` dentro de `src/js/audio-manager.js`:
+As 10 faixas ficam em `src/assets/audio/music/`. Cada contexto tem uma lista, definida em `PLAYLISTS` dentro de `src/js/audio-manager.js`:
 
 | Contexto | Faixas |
 |---|---|
-| Tela inicial e menus | Manhã de Sol · Aroma de Café · Balanço do Cafezinho |
-| Partida, níveis 1–5 | Encontro no Quintal · Carrossel Colorido · Roda de Amigos |
-| Partida, níveis 6–12 | Tarde de Domingo · Tardes de Sol · Afternoon Sun & Shadows · Seaside Breeze Bossa |
-| Partida, níveis 13–20 | Caminho Interno · Reflexos de Luz · Mistério do Sol · Mistério do Sol II |
-| Partida, níveis 21+ | Caminho Aberto · Tropicália Dreams · Batida de Verão |
-| Vitória | Roda de Sol |
-| Conclusão da campanha (nível 25) | Horizontes Calmos |
-| Derrota | Domingo Tranquilo |
+| Tela inicial e menus | Academia de Calma · Antarctic Chill |
+| Partida, níveis 1–5 | Island Puzzle Flow · Brisa Tropical |
+| Partida, níveis 6–12 | Bikini Atoll Lofi · Vibe da Praia Maluca |
+| Partida, níveis 13–20 | Twisted Harmony · Folga do Cientista |
+| Partida, níveis 21+ | Gem Stone Hop · Twisted Harmony · Island Puzzle Flow |
+| Fase concluída | Gem Stone Hop |
+| Conclusão da campanha (nível 25) | O Nível Zen Final |
+| Fim da rodada (as 3 vidas ou a 3ª dica) | Academia de Calma |
 
-A distribuição foi feita **pelos títulos**, porque as faixas não foram ouvidas. Para trocar, basta editar `PLAYLISTS`.
+Os arquivos usam nomes sem espaços nem acentos (o `id` da faixa); o nome exibido no jogo fica em `TRACKS`. Ao substituir um arquivo mantendo o mesmo nome, mude o sufixo de `AUDIO_CACHE` em `audio-manager.js` **e** em `sw.js`.
+
+A distribuição foi feita **pelos títulos**. Para trocar, basta editar `PLAYLISTS`.
 
 - **Transições:** a troca entre faixas usa crossfade, então só uma música toca por vez. Quando a faixa acaba, segue a próxima da lista, ou repete se "Repetir a faixa" estiver ligado.
-- **Volume e modo:** volume e silenciar ficam em Configurações e em Músicas. Também há o modo "Sempre a mesma".
+- **Volume e modo:** volume e silenciar ficam em Configurações e em Músicas. Música e efeitos começam em 10% (padrão em `src/js/storage.js`). Também há o modo "Sempre a mesma".
 - **Efeitos sonoros:** gerados pelo próprio navegador (seleção, acerto, erro, dica, miado, revelação, vitória, derrota, cliques).
 - **Autoplay:** o áudio começa após o primeiro toque, por exigência dos navegadores.
 
