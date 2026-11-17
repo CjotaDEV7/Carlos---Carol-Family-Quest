@@ -1,9 +1,10 @@
 /* CarolPawsDoku — temas de cor.
  *
  * "Porcelana" é o tema claro original (tokens em main.css).
- * Os temas escuros reaproveitam a PALETA OFICIAL: cada pastel vira a sua versão
- * "noturna" misturada ao fundo do tema, então botões, regiões do tabuleiro e
- * textos se ajustam juntos sem regras por componente.
+ * Os cinco temas escuros são "de entardecer": fundos médios e quentes (não preto),
+ * texto creme em vez de branco e pouco azul no conjunto, para descansar a vista
+ * à noite. Eles reaproveitam a PALETA OFICIAL: o tabuleiro usa os mesmos pastéis,
+ * só um pouco suavizados pelo fundo; botões e selos usam o pastel mais apagado.
  *
  * Cada tema escuro define só duas cores:
  *   --base  fundo da tela
@@ -11,60 +12,65 @@
  * O tema ativo é aplicado em <html data-theme="..." class="theme-dark"> (ver theme.js).
  */
 
-:root[data-theme="cafe"]    { --base: #1C1916; --tint: #E6DACB; }
-:root[data-theme="lavanda"] { --base: #1B1824; --tint: #DAD1F0; }
-:root[data-theme="menta"]   { --base: #151E19; --tint: #D2E8C6; }
-:root[data-theme="ceu"]     { --base: #141C26; --tint: #C8DCF1; }
-:root[data-theme="rose"]    { --base: #211818; --tint: #F6CFCB; }
+:root[data-theme="cafe"]    { --base: #3D352D; --tint: #E6DACB; }
+:root[data-theme="lavanda"] { --base: #3B3442; --tint: #DAD1F0; }
+:root[data-theme="menta"]   { --base: #323C34; --tint: #D2E8C6; }
+:root[data-theme="ceu"]     { --base: #313D3E; --tint: #C2E4DF; }
+:root[data-theme="rose"]    { --base: #45352F; --tint: #F6CFCB; }
 
 :root.theme-dark {
   color-scheme: dark;
 
-  /* paleta noturna: o mesmo pastel, misturado ao fundo do tema */
-  --pastel-blush:    color-mix(in oklab, #F6CFCB 36%, var(--base));
-  --pastel-apricot:  color-mix(in oklab, #FBDDB5 36%, var(--base));
-  --pastel-butter:   color-mix(in oklab, #F6EDB8 34%, var(--base));
-  --pastel-mint:     color-mix(in oklab, #D2E8C6 34%, var(--base));
-  --pastel-seafoam:  color-mix(in oklab, #C2E4DF 34%, var(--base));
-  --pastel-sky:      color-mix(in oklab, #C8DCF1 36%, var(--base));
-  --pastel-lavender: color-mix(in oklab, #DAD1F0 36%, var(--base));
-  --pastel-orchid:   color-mix(in oklab, #EDCDE5 36%, var(--base));
-  --pastel-sand:     color-mix(in oklab, #E6DACB 26%, var(--base));
-  --pastel-mint-deep: #93C083;
+  /* interface: pastel apagado (texto creme por cima, contraste ≥ 4,5:1) */
+  --pastel-blush:    color-mix(in oklab, #F6CFCB 30%, var(--base));
+  --pastel-apricot:  color-mix(in oklab, #FBDDB5 30%, var(--base));
+  --pastel-butter:   color-mix(in oklab, #F6EDB8 28%, var(--base));
+  --pastel-mint:     color-mix(in oklab, #D2E8C6 28%, var(--base));
+  --pastel-seafoam:  color-mix(in oklab, #C2E4DF 28%, var(--base));
+  --pastel-sky:      color-mix(in oklab, #C8DCF1 30%, var(--base));
+  --pastel-lavender: color-mix(in oklab, #DAD1F0 30%, var(--base));
+  --pastel-orchid:   color-mix(in oklab, #EDCDE5 30%, var(--base));
+  --pastel-sand:     color-mix(in oklab, #E6DACB 24%, var(--base));
+  --pastel-mint-deep: #A3C892;
   --pastel-porcelain: var(--base);
-  --neutral-white:   color-mix(in oklab, var(--tint) 9%, var(--base));
+  --neutral-white:   color-mix(in oklab, var(--tint) 12%, var(--base));
 
-  /* regiões do tabuleiro: mais vivas que o resto da interface, para se distinguirem bem */
-  --region-0: color-mix(in oklab, #F6CFCB 54%, var(--base));
-  --region-1: color-mix(in oklab, #C8DCF1 54%, var(--base));
-  --region-2: color-mix(in oklab, #F6EDB8 50%, var(--base));
-  --region-3: color-mix(in oklab, #DAD1F0 54%, var(--base));
-  --region-4: color-mix(in oklab, #D2E8C6 50%, var(--base));
-  --region-5: color-mix(in oklab, #FBDDB5 52%, var(--base));
-  --region-6: color-mix(in oklab, #C2E4DF 50%, var(--base));
-  --region-7: color-mix(in oklab, #EDCDE5 54%, var(--base));
-  --region-8: color-mix(in oklab, #E6DACB 44%, var(--base));
-  --region-line: color-mix(in oklab, #F2ECE4 62%, var(--base));
-  --cell-grid: rgb(255 255 255 / 0.07);
+  /* tabuleiro: os mesmos pastéis, claros, só levemente aquecidos pelo fundo */
+  --region-0: color-mix(in oklab, #F6CFCB 80%, var(--base));
+  --region-1: color-mix(in oklab, #C8DCF1 80%, var(--base));
+  --region-2: color-mix(in oklab, #F6EDB8 80%, var(--base));
+  --region-3: color-mix(in oklab, #DAD1F0 80%, var(--base));
+  --region-4: color-mix(in oklab, #D2E8C6 80%, var(--base));
+  --region-5: color-mix(in oklab, #FBDDB5 80%, var(--base));
+  --region-6: color-mix(in oklab, #C2E4DF 80%, var(--base));
+  --region-7: color-mix(in oklab, #EDCDE5 80%, var(--base));
+  --region-8: color-mix(in oklab, #E6DACB 80%, var(--base));
+  --region-line: color-mix(in oklab, #B9AC9E 55%, var(--base));
+  --cell-grid: rgb(255 255 255 / 0.35);
 
-  --color-surface-soft: color-mix(in oklab, var(--tint) 14%, var(--base));
-  --color-border: color-mix(in oklab, var(--tint) 20%, var(--base));
-  --color-text: #F2ECE4;
-  --color-muted: color-mix(in oklab, #F2ECE4 64%, var(--base));
-  --color-error: #E8968E;
-  --color-on-accent: #1C1916;
-  --overlay-scrim: rgb(0 0 0 / 0.55);
-  --shadow-soft: 0 8px 28px rgb(0 0 0 / 0.35);
+  --color-surface-soft: color-mix(in oklab, var(--tint) 18%, var(--base));
+  --color-border: color-mix(in oklab, var(--tint) 26%, var(--base));
+  --color-text: #F4E9D8;
+  --color-muted: color-mix(in oklab, #F4E9D8 78%, var(--base));
+  --color-error: #EBA197;
+  --color-on-accent: var(--base);
+  --overlay-scrim: rgb(20 14 10 / 0.5);
+  --shadow-soft: 0 8px 28px rgb(20 14 10 / 0.3);
 }
 
 /* Menu: a arte tem fundo creme próprio; no escuro ela vira um cartão arredondado. */
 .theme-dark .screen-menu {
   --menu-cream: var(--base);
-  --menu-rim: color-mix(in oklab, var(--tint) 22%, var(--base));
+  --menu-rim: color-mix(in oklab, var(--tint) 26%, var(--base));
 }
 .theme-dark .menu-art { border-radius: 24px; box-shadow: var(--shadow-soft); }
-.theme-dark .menu-gear { color: #A7D0BA; background: rgb(0 0 0 / 0.25); }
-.theme-dark .menu-gear:hover { background: rgb(0 0 0 / 0.4); }
+.theme-dark .menu-gear { color: #B5D6C0; background: rgb(0 0 0 / 0.2); }
+.theme-dark .menu-gear:hover { background: rgb(0 0 0 / 0.32); }
+
+/* Menos luz azul também nas artes: um toque quente e um pouco menos de brilho. */
+.theme-dark .char img,
+.theme-dark .menu-art,
+.theme-dark .support-teaser { filter: sepia(.12) saturate(.94) brightness(.96); }
 
 /* Destaques em verde menta continuam claros: texto escuro por cima. */
 .theme-dark .btn-accent,
@@ -72,16 +78,13 @@
 .theme-dark .history .res.win,
 .theme-dark .track.is-playing .btn { color: var(--color-on-accent); }
 
-/* Interruptor: a bolinha precisa contrastar com o trilho escuro. */
+/* Interruptor: a bolinha precisa contrastar com o trilho. */
 .theme-dark .switch i::after { background: var(--color-text); }
 
-/* Marcas ✕ e pontinhos sobre as regiões noturnas: cor do texto (o tom apagado some). */
-.theme-dark .mark { color: var(--color-text); opacity: .7; }
-.theme-dark .auto { background: var(--color-text); opacity: .3; }
-
-/* No escuro, destacar é clarear (no claro, é escurecer). */
-.theme-dark .cell.hl-line { filter: brightness(1.12) saturate(1.1); }
-.theme-dark .cell.focus { filter: brightness(1.22) saturate(1.15); }
+/* Tabuleiro claro: marcas, pontinhos e anel de "pronto para revelar" na cor escura do fundo. */
+.theme-dark .mark { color: var(--base); opacity: .75; }
+.theme-dark .auto { background: var(--base); opacity: .35; }
+.theme-dark .cell.armed { box-shadow: inset 0 0 0 3px color-mix(in oklab, var(--base) 70%, transparent); }
 
 /* ---------- Seletor de tema (Configurações) ---------- */
 .theme-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 10px; margin-top: 4px; }

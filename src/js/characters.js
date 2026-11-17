@@ -23,7 +23,7 @@
     { id: 'mamae', name: 'Bethânia', kind: 'person' },
     { id: 'dr-sandro', name: 'Sandro', kind: 'person' },
     { id: 'carlos-pai', name: 'Carlos Pai', kind: 'person' },
-    { id: 'darlene', name: 'Darlene', kind: 'person' },
+    { id: 'darlene', name: 'Darlenes', kind: 'person' },
   ];
   const EXPRESSIONS = ['normal', 'happy'];
   const BASE = 'src/assets/characters/';

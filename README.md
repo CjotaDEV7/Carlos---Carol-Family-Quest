@@ -1,6 +1,6 @@
 # Carlos & Carol Family Quest 🐾
 
-Um quebra-cabeça de lógica tranquilo: cada **região colorida** esconde um personagem. Os personagens são **Carol, Sol, Mezzo, Jade, Celso R., Rose, Cjota, Bethânia, Sandro, Carlos Pai e Darlene**.
+Um quebra-cabeça de lógica tranquilo: cada **região colorida** esconde um personagem. Os personagens são **Carol, Sol, Mezzo, Jade, Celso R., Rose, Cjota, Bethânia, Sandro, Carlos Pai e Darlenes**.
 
 O jogo roda inteiro no navegador, sem servidor e sem login. Depois do primeiro carregamento, imagens, código e músicas ficam guardados em cache.
 
@@ -35,7 +35,7 @@ O tabuleiro N×N tem N regiões coloridas. A regra:
 - **Personagens já revelados:** só nas fases 1 a 3 alguns aparecem desde o início, para ajudar. Da fase 4 em diante, todos começam escondidos.
 - **Transição de fase:** cada fase começa com um quadro em branco. As casas se encaixam em onda diagonal, com um "toc" suave que sobe de tom, e um acorde leve no fim. O cronômetro só começa quando o tabuleiro fica pronto. Com "Reduzir movimento" ligado, as casas só aparecem esmaecendo; com as animações desligadas, o tabuleiro aparece na hora.
 - **Coleção:** a tela **Personagens** mostra quem você já encontrou.
-- **Aparência:** em Configurações há o tema claro *Porcelana* (padrão), cinco temas escuros feitos com a mesma paleta (*Café, Lavanda, Menta, Céu e Rosé*) e o *Automático*, que segue o aparelho (Porcelana de dia, Café no modo escuro). As cores ficam em `src/css/themes.css`.
+- **Aparência:** em Configurações há o tema claro *Porcelana* (padrão), cinco temas escuros de entardecer feitos com a mesma paleta (*Café, Lavanda, Menta, Céu e Rosé*): fundos médios e quentes em vez de preto, texto creme e pouco azul, para descansar a vista à noite e o *Automático*, que segue o aparelho (Porcelana de dia, Café no modo escuro). As cores ficam em `src/css/themes.css`.
 
 ### Fases
 

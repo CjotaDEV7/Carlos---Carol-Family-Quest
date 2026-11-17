@@ -1,4 +1,4 @@
-/* CarolPawsDoku — temas de cor (claro "Porcelana" e cinco escuros da mesma paleta).
+/* CarolPawsDoku — temas de cor (claro "Porcelana" e cinco escuros de entardecer, da mesma paleta).
  *
  * O tema fica em CPD.settings('theme'). O <head> do index.html aplica o tema salvo
  * antes de desenhar a página (evita piscar claro); este módulo cuida das trocas
@@ -10,11 +10,11 @@
 
   const THEMES = [
     { id: 'porcelana', name: 'Porcelana', note: 'Claro', dark: false, bg: '#FBF7F2', swatch: ['#FBF7F2', '#F6CFCB', '#A9CF99'] },
-    { id: 'cafe', name: 'Café', note: 'Escuro', dark: true, bg: '#1C1916', swatch: ['#1C1916', '#E6DACB', '#93C083'] },
-    { id: 'lavanda', name: 'Lavanda', note: 'Escuro', dark: true, bg: '#1B1824', swatch: ['#1B1824', '#DAD1F0', '#93C083'] },
-    { id: 'menta', name: 'Menta', note: 'Escuro', dark: true, bg: '#151E19', swatch: ['#151E19', '#D2E8C6', '#93C083'] },
-    { id: 'ceu', name: 'Céu', note: 'Escuro', dark: true, bg: '#141C26', swatch: ['#141C26', '#C8DCF1', '#93C083'] },
-    { id: 'rose', name: 'Rosé', note: 'Escuro', dark: true, bg: '#211818', swatch: ['#211818', '#F6CFCB', '#93C083'] },
+    { id: 'cafe', name: 'Café', note: 'Entardecer', dark: true, bg: '#3D352D', swatch: ['#3D352D', '#E6DACB', '#F6CFCB'] },
+    { id: 'lavanda', name: 'Lavanda', note: 'Entardecer', dark: true, bg: '#3B3442', swatch: ['#3B3442', '#DAD1F0', '#EDCDE5'] },
+    { id: 'menta', name: 'Menta', note: 'Entardecer', dark: true, bg: '#323C34', swatch: ['#323C34', '#D2E8C6', '#F6EDB8'] },
+    { id: 'ceu', name: 'Céu', note: 'Entardecer', dark: true, bg: '#313D3E', swatch: ['#313D3E', '#C2E4DF', '#FBDDB5'] },
+    { id: 'rose', name: 'Rosé', note: 'Entardecer', dark: true, bg: '#45352F', swatch: ['#45352F', '#F6CFCB', '#FBDDB5'] },
   ];
   const AUTO = { id: 'auto', name: 'Automático', note: 'Segue o aparelho' };
   const LIGHT = 'porcelana';

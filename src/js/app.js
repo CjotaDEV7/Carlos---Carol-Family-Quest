@@ -250,7 +250,7 @@
     });
     sync();
     return el('div', { class: 'card' }, el('h3', null, 'Aparência'),
-      el('p', { class: 'hint-text' }, 'Tema de cores do jogo. Os escuros usam a mesma paleta, em tons de noite.'), grid);
+      el('p', { class: 'hint-text' }, 'Tema de cores do jogo. Os de entardecer usam a mesma paleta, mais suaves e com menos luz azul para descansar a vista.'), grid);
   }
 
   function renderSettings() {
