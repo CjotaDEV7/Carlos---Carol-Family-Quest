@@ -11,42 +11,32 @@
   'use strict';
 
   const MUSIC_DIR = 'src/assets/audio/music/';
-  const AUDIO_CACHE = 'cpd-audio-v1'; // mude o sufixo se substituir arquivos com o mesmo nome
+  const AUDIO_CACHE = 'cpd-audio-v2'; // mude o sufixo se substituir arquivos com o mesmo nome
   const FADE_MS = 1200;
 
   const TRACKS = [
-    { id: 'manha-de-sol', name: 'Manhã de Sol' },
-    { id: 'aroma-de-cafe', name: 'Aroma de Café' },
-    { id: 'balanco-do-cafezinho', name: 'Balanço do Cafezinho' },
-    { id: 'encontro-no-quintal', name: 'Encontro no Quintal' },
-    { id: 'carrossel-colorido', name: 'Carrossel Colorido' },
-    { id: 'roda-de-amigos', name: 'Roda de Amigos' },
-    { id: 'tarde-de-domingo', name: 'Tarde de Domingo' },
-    { id: 'tardes-de-sol', name: 'Tardes de Sol' },
-    { id: 'afternoon-sun-and-shadows', name: 'Afternoon Sun & Shadows' },
-    { id: 'seaside-breeze-bossa', name: 'Seaside Breeze Bossa' },
-    { id: 'caminho-interno', name: 'Caminho Interno' },
-    { id: 'reflexos-de-luz', name: 'Reflexos de Luz' },
-    { id: 'misterio-do-sol', name: 'Mistério do Sol' },
-    { id: 'misterio-do-sol-2', name: 'Mistério do Sol II' },
-    { id: 'caminho-aberto', name: 'Caminho Aberto' },
-    { id: 'tropicalia-dreams', name: 'Tropicália Dreams' },
-    { id: 'batida-de-verao', name: 'Batida de Verão' },
-    { id: 'roda-de-sol', name: 'Roda de Sol' },
-    { id: 'horizontes-calmos', name: 'Horizontes Calmos' },
-    { id: 'domingo-tranquilo', name: 'Domingo Tranquilo' },
+    { id: 'academia-de-calma', name: 'Academia de Calma' },
+    { id: 'antarctic-chill', name: 'Antarctic Chill' },
+    { id: 'island-puzzle-flow', name: 'Island Puzzle Flow' },
+    { id: 'brisa-tropical', name: 'Brisa Tropical' },
+    { id: 'bikini-atoll-lofi', name: 'Bikini Atoll Lofi' },
+    { id: 'vibe-da-praia-maluca', name: 'Vibe da Praia Maluca' },
+    { id: 'twisted-harmony', name: 'Twisted Harmony' },
+    { id: 'folga-do-cientista', name: 'Folga do Cientista' },
+    { id: 'gem-stone-hop', name: 'Gem Stone Hop' },
+    { id: 'o-nivel-zen-final', name: 'O Nível Zen Final' },
   ];
 
   /* Listas por contexto. Edite aqui para trocar a música de cada momento. */
   const PLAYLISTS = {
-    menu: { label: 'Tela inicial e menus', tracks: ['manha-de-sol', 'aroma-de-cafe', 'balanco-do-cafezinho'] },
-    intro: { label: 'Partida · níveis 1–5', tracks: ['encontro-no-quintal', 'carrossel-colorido', 'roda-de-amigos'] },
-    mid: { label: 'Partida · níveis 6–12', tracks: ['tarde-de-domingo', 'tardes-de-sol', 'afternoon-sun-and-shadows', 'seaside-breeze-bossa'] },
-    adv: { label: 'Partida · níveis 13–20', tracks: ['caminho-interno', 'reflexos-de-luz', 'misterio-do-sol', 'misterio-do-sol-2'] },
-    special: { label: 'Partida · níveis 21+', tracks: ['caminho-aberto', 'tropicalia-dreams', 'batida-de-verao'] },
-    victory: { label: 'Vitória', tracks: ['roda-de-sol'], once: true },
-    finale: { label: 'Conclusão da campanha', tracks: ['horizontes-calmos'], once: true },
-    defeat: { label: 'Derrota', tracks: ['domingo-tranquilo'], once: true },
+    menu: { label: 'Tela inicial e menus', tracks: ['academia-de-calma', 'antarctic-chill'] },
+    intro: { label: 'Partida · níveis 1–5', tracks: ['island-puzzle-flow', 'brisa-tropical'] },
+    mid: { label: 'Partida · níveis 6–12', tracks: ['bikini-atoll-lofi', 'vibe-da-praia-maluca'] },
+    adv: { label: 'Partida · níveis 13–20', tracks: ['twisted-harmony', 'folga-do-cientista'] },
+    special: { label: 'Partida · níveis 21+', tracks: ['gem-stone-hop', 'twisted-harmony', 'island-puzzle-flow'] },
+    victory: { label: 'Fase concluída', tracks: ['gem-stone-hop'], once: true },
+    finale: { label: 'Conclusão da campanha', tracks: ['o-nivel-zen-final'], once: true },
+    defeat: { label: 'Fim da rodada', tracks: ['academia-de-calma'], once: true },
   };
 
   const SFX = [
@@ -58,7 +48,7 @@
     { id: 'reveal', name: 'Revelação (pessoas)' },
     { id: 'unlock', name: 'Desbloqueio de fase' },
     { id: 'victory', name: 'Vitória' },
-    { id: 'defeat', name: 'Derrota' },
+    { id: 'defeat', name: 'Fim da rodada' },
     { id: 'click', name: 'Cliques nos menus' },
     { id: 'snap', name: 'Casas se encaixando' },
     { id: 'fit', name: 'Tabuleiro pronto' },
@@ -289,7 +279,9 @@
     currentContext = context;
     if (!unlocked) { pendingStart = true; return; }
     if (S().get('trackMode') === 'manual') {
-      const id = S().get('manualTrack');
+      const saved = S().get('manualTrack');
+      // faixa salva pode ser de uma trilha antiga: cai na primeira do menu
+      const id = TRACKS.some((t) => t.id === saved) ? saved : PLAYLISTS.menu.tracks[0];
       if (!force && currentTrack === id && currentKey === 'manual') return;
       playTrack(id, { key: 'manual', loopOne: true });
       return;
