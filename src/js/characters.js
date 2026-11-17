@@ -22,6 +22,8 @@
     { id: 'cjota', name: 'Cjota', kind: 'person' },
     { id: 'mamae', name: 'Bethânia', kind: 'person' },
     { id: 'dr-sandro', name: 'Sandro', kind: 'person' },
+    { id: 'carlos-pai', name: 'Carlos Pai', kind: 'person' },
+    { id: 'darlene', name: 'Darlene', kind: 'person' },
   ];
   const EXPRESSIONS = ['normal', 'happy'];
   const BASE = 'src/assets/characters/';
@@ -47,7 +49,7 @@
   }
   function hasImages(id) { return !!url(id, 'normal'); }
 
-  /** Pré-carrega as 14 imagens e registra quais existem. Nunca rejeita. */
+  /** Pré-carrega as imagens do elenco e registra quais existem. Nunca rejeita. */
   function preload() {
     if (typeof Image === 'undefined') return Promise.resolve();
     return Promise.all(allPaths().map((p) => new Promise((resolve) => {
@@ -71,7 +73,8 @@
   /**
    * Sorteia o elenco para um tabuleiro com `size` regiões.
    * Retorna um array de ids distintos: posição k = personagem da região k.
-   * (São 9 personagens e o maior tabuleiro é 9×9: ninguém se repete.)
+   * (São 11 personagens e o maior tabuleiro é 9×9: ninguém se repete, e a
+   * cada partida um grupo diferente aparece.)
    */
   function assignCast(size, rng) {
     return shuffle(CAST.map((c) => c.id), rng).slice(0, Math.min(size, CAST.length));

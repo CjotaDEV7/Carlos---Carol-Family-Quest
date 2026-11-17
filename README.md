@@ -1,6 +1,6 @@
 # Carlos & Carol Family Quest 🐾
 
-Um quebra-cabeça de lógica tranquilo: cada **região colorida** esconde um personagem. Os personagens são **Carol, Sol, Mezzo, Jade, Celso R., Rose, Cjota, Bethânia e Sandro**.
+Um quebra-cabeça de lógica tranquilo: cada **região colorida** esconde um personagem. Os personagens são **Carol, Sol, Mezzo, Jade, Celso R., Rose, Cjota, Bethânia, Sandro, Carlos Pai e Darlene**.
 
 O jogo roda inteiro no navegador, sem servidor e sem login. Depois do primeiro carregamento, imagens, código e músicas ficam guardados em cache.
 
@@ -31,7 +31,7 @@ O tabuleiro N×N tem N regiões coloridas. A regra:
 
 - **Marcação automática (fases 1–9):** casas descartadas por um personagem já revelado ganham um pontinho suave e tentar revelar numa delas não custa vida. A partir da fase 10 os pontinhos somem e você marca tudo.
 - **Teclado:** setas movem, `X`/Espaço marca, `Enter` revela, `Z` desfaz, `Esc` pausa.
-- **Sorteio:** a cada partida, os personagens são sorteados entre as regiões. No 9×9 aparecem os 9, sem repetição.
+- **Sorteio:** a cada partida, os personagens são sorteados entre as regiões. No 9×9 aparecem 9 dos 11, sem repetição.
 - **Personagens já revelados:** só nas fases 1 a 3 alguns aparecem desde o início, para ajudar. Da fase 4 em diante, todos começam escondidos.
 - **Transição de fase:** cada fase começa com um quadro em branco. As casas se encaixam em onda diagonal, com um "toc" suave que sobe de tom, e um acorde leve no fim. O cronômetro só começa quando o tabuleiro fica pronto. Com "Reduzir movimento" ligado, as casas só aparecem esmaecendo; com as animações desligadas, o tabuleiro aparece na hora.
 - **Coleção:** a tela **Personagens** mostra quem você já encontrou.
@@ -83,7 +83,7 @@ src/assets/characters/<id>/normal.webp   ← expressão normal
 src/assets/characters/<id>/happy.webp    ← expressão de alegria
 ```
 
-`<id>` é um destes: `carol`, `sol`, `mezzo`, `jade`, `celso`, `rose`, `cjota`, `mamae`, `dr-sandro`.
+`<id>` é um destes: `carol`, `sol`, `mezzo`, `jade`, `celso`, `rose`, `cjota`, `mamae`, `dr-sandro`, `carlos-pai`, `darlene`.
 
 As imagens originais do Gemini vinham com as duas expressões no mesmo arquivo e o "xadrez de transparência" desenhado como pixels. Elas foram processadas fora do jogo:
 

@@ -7,7 +7,7 @@
  *
  * Para publicar arquivos novos ou alterados, aumente VERSION: o cache antigo é apagado.
  */
-const VERSION = 'v3.9.0';
+const VERSION = 'v3.10.0';
 const SHELL_CACHE = 'cpd-shell-' + VERSION;
 const AUDIO_CACHE = 'cpd-audio-v1';
 
@@ -22,7 +22,7 @@ const CORE = [
   'src/assets/icons/favicon.svg', 'src/assets/icons/icon-192.png', 'src/assets/icons/icon-512.png', 'src/assets/icons/icon-maskable-512.png', 'src/assets/icons/apple-touch-icon.png',
   'src/assets/ui/menu-hero.webp', 'src/assets/ui/apoio-banner.webp', 'src/assets/ui/apoio-teaser.webp',
 ];
-const CHARACTERS = ['carol', 'sol', 'mezzo', 'jade', 'celso', 'rose', 'cjota', 'mamae', 'dr-sandro'];
+const CHARACTERS = ['carol', 'sol', 'mezzo', 'jade', 'celso', 'rose', 'cjota', 'mamae', 'dr-sandro', 'carlos-pai', 'darlene'];
 // opcionais: podem não existir ainda (foto do desenvolvedor e QR Code Pix)
 const IMAGES = ['src/assets/images/desenvolvedor.jpg', 'src/assets/images/qrcode-pix.png'];
 CHARACTERS.forEach((id) => ['normal', 'happy'].forEach((e) => IMAGES.push(`src/assets/characters/${id}/${e}.webp`)));
