@@ -1,7 +1,8 @@
 /* CarolPawsDoku — Audio Manager (independente da lógica do Sudoku).
  * Músicas: arquivos MP3 do projeto em src/assets/audio/music/, organizados em
- *   listas por contexto. Troca com crossfade entre dois players — só uma faixa
- *   audível por vez. Cada faixa é guardada no Cache Storage na primeira vez que
+ *   listas por contexto. A troca é em sequência, sem sobrepor músicas: a faixa
+ *   atual sai devagar, há uma pausa curta e a nova entra devagar (curvas suaves).
+ *   Perto do fim de cada faixa o volume também desce aos poucos. Cada faixa é guardada no Cache Storage na primeira vez que
  *   toca e, depois, lida do cache como blob (evita downloads repetidos e o
  *   problema de "range requests" de mídia em Service Workers).
  * Efeitos: sintetizados com Web Audio (seleção, acerto, erro, dica, miado…).
@@ -12,7 +13,11 @@
 
   const MUSIC_DIR = 'src/assets/audio/music/';
   const AUDIO_CACHE = 'cpd-audio-v2'; // mude o sufixo se substituir arquivos com o mesmo nome
-  const FADE_MS = 1200;
+  const FADE_OUT_MS = 2800; // saída da faixa atual
+  const GAP_MS = 500;       // silêncio curto entre uma música e outra
+  const FADE_IN_MS = 3500;  // entrada da nova faixa
+  const END_FADE_S = 4;     // segundos finais de cada faixa com volume descendo
+  const STOP_MS = 1500;     // parar a música (ex.: volume zerado)
 
   const TRACKS = [
     { id: 'academia-de-calma', name: 'Academia de Calma' },
@@ -62,7 +67,11 @@
   let ctx = null, sfxGain = null, unlocked = false, pendingStart = false;
   let currentContext = 'menu', currentKey = null, currentTrack = null, token = 0;
   const players = [new Audio(), new Audio()];
-  players.forEach((p) => { p.preload = 'auto'; p.addEventListener('ended', () => onEnded(p)); });
+  players.forEach((p) => {
+    p.preload = 'auto';
+    p.addEventListener('ended', () => onEnded(p));
+    p.addEventListener('timeupdate', () => fadeNearEnd(p));
+  });
   let active = 0; // índice do player audível
   const blobUrls = new Map(); // id → objectURL (limitado a 4 para economizar memória)
   const lastPlayed = {};
@@ -203,17 +212,37 @@
   }
 
   /* ---------------- Reprodução com crossfade ---------------- */
-  function fade(p, to, ms) {
+  /** Interrompe o fade em andamento de um player (e libera quem esperava por ele). */
+  function cancelFade(p) {
     clearInterval(p._fade);
+    if (p._fadeDone) { const done = p._fadeDone; p._fadeDone = null; done(); }
+  }
+
+  /** Muda o volume aos poucos, em curva suave (começa e termina devagar). */
+  function fade(p, to, ms) {
+    cancelFade(p);
     const from = p.volume;
     const start = performance.now();
     return new Promise((resolve) => {
+      p._fadeDone = resolve;
       p._fade = setInterval(() => {
         const k = Math.min(1, (performance.now() - start) / ms);
-        p.volume = Math.max(0, Math.min(1, from + (to - from) * k));
-        if (k >= 1) { clearInterval(p._fade); resolve(); }
+        const eased = 0.5 - Math.cos(Math.PI * k) / 2;
+        p.volume = Math.max(0, Math.min(1, from + (to - from) * eased));
+        if (k >= 1) { clearInterval(p._fade); p._fadeDone = null; resolve(); }
       }, 40);
     });
+  }
+
+  const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+
+  /** Nos segundos finais da faixa, o volume desce sozinho (a próxima entra depois). */
+  function fadeNearEnd(p) {
+    if (p !== players[active] || p.loop || p._endFading || p.paused) return;
+    const left = p.duration - p.currentTime;
+    if (!isFinite(left) || left > END_FADE_S) return;
+    p._endFading = true;
+    fade(p, 0, Math.max(300, left * 1000 - 150));
   }
 
   async function playTrack(id, opts) {
@@ -227,19 +256,34 @@
     currentKey = o.key || 'preview:' + id;
     CPD.emit('music', { track: id, playing: true });
     if (musicVol() <= 0) { stopMusic(true); currentTrack = id; return; }
-    const src = await sourceFor(id);
-    if (my !== token) return; // outra troca aconteceu enquanto carregava
+    const loading = sourceFor(id); // baixa a próxima enquanto a atual sai
     const out = players[active];
     const next = players[1 - active];
+    // 1) a faixa atual sai devagar; 2) pausa curta; 3) a nova entra devagar
+    if (!out.paused && out.volume > 0.01) {
+      // se a saída já estava pela metade, termina no tempo proporcional
+      const share = Math.min(1, out.volume / Math.max(musicVol(), 0.01));
+      await fade(out, 0, Math.max(600, FADE_OUT_MS * share));
+      if (my !== token) return; // outra troca começou durante a saída
+      out.pause();
+      await wait(GAP_MS);
+    } else {
+      const endedNaturally = out.ended;
+      out.pause();
+      if (endedNaturally) { await wait(GAP_MS); if (my !== token) return; }
+    }
+    const src = await loading;
+    if (my !== token) return;
+    cancelFade(next);
     next.src = src;
     next.loop = !o.once && (!!S().get('loop') || !!o.loopOne);
     next._once = !!o.once;
+    next._endFading = false;
     next.volume = 0;
     try { await next.play(); } catch (e) { pendingStart = true; return; }
     if (my !== token) { next.pause(); return; }
     active = 1 - active;
-    fade(next, musicVol(), FADE_MS);
-    fade(out, 0, FADE_MS).then(() => { if (players[active] !== out) out.pause(); });
+    fade(next, musicVol(), FADE_IN_MS);
   }
 
   function onEnded(p) {
@@ -249,8 +293,9 @@
   }
 
   function stopMusic(silent) {
-    token++;
-    players.forEach((p) => fade(p, 0, 500).then(() => p.pause()));
+    const my = ++token;
+    // só pausa se nenhuma outra música começou durante a saída
+    players.forEach((p) => fade(p, 0, STOP_MS).then(() => { if (my === token) p.pause(); }));
     currentTrack = null;
     currentKey = null;
     if (!silent) CPD.emit('music', { playing: false });
@@ -294,14 +339,14 @@
   CPD.on('settings', ({ key }) => {
     if (key === 'musicVolume' || key === 'muteMusic') {
       const p = players[active];
-      clearInterval(p._fade);
+      cancelFade(p);
       p.volume = musicVol();
       if (musicVol() <= 0) players.forEach((x) => x.pause());
       else if (unlocked && currentTrack && p.paused) p.play().catch(() => {});
       else if (unlocked && !currentTrack) setContext(currentContext, true);
     }
     if (key === 'sfxVolume' || key === 'muteSfx') { if (sfxGain) sfxGain.gain.value = sfxVol(); }
-    if (key === 'loop') players[active].loop = !!S().get('loop') && !players[active]._once;
+    if (key === 'loop') { const p = players[active]; p.loop = !!S().get('loop') && !p._once; if (p.loop && p._endFading) { p._endFading = false; fade(p, musicVol(), 800); } }
     if (key === 'trackMode' || key === 'manualTrack') setContext(currentContext, true);
   });
 

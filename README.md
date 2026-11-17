@@ -135,7 +135,7 @@ Os arquivos usam nomes sem espaços nem acentos (o `id` da faixa); o nome exibid
 
 A distribuição foi feita **pelos títulos**. Para trocar, basta editar `PLAYLISTS`.
 
-- **Transições:** a troca entre faixas usa crossfade, então só uma música toca por vez. Quando a faixa acaba, segue a próxima da lista, ou repete se "Repetir a faixa" estiver ligado.
+- **Transições:** as músicas nunca tocam juntas. A faixa atual sai devagar (2,8 s), há meio segundo de silêncio e a nova entra devagar (3,5 s), com curvas suaves. Nos 4 s finais de cada faixa o volume também desce sozinho. Os tempos ficam no topo de `audio-manager.js`. Quando a faixa acaba, segue a próxima da lista, ou repete se "Repetir a faixa" estiver ligado.
 - **Volume e modo:** volume e silenciar ficam em Configurações e em Músicas. Música e efeitos começam em 10% (padrão em `src/js/storage.js`). Também há o modo "Sempre a mesma".
 - **Efeitos sonoros:** gerados pelo próprio navegador (seleção, acerto, erro, dica, miado, revelação, vitória, derrota, cliques).
 - **Autoplay:** o áudio começa após o primeiro toque, por exigência dos navegadores.
